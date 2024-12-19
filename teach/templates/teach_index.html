@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>教师首页</title>
+    <!-- 引入 Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/teach_index.css' %}">
+</head>
+<body>
+    <div class="page-container">
+        <h1 class="page-title">欢迎使用教务管理系统</h1>
+        <p class="page-title">{{ username }}</p>
+        <nav class="menu">
+            <a href="courselist" class="menu-item">
+                <span class="material-icons">event</span> <!-- 正确的图标名称 -->
+                <span class="menu-item-label">查看课表</span>
+            </a>
+            <a href="courseadapt" class="menu-item">
+                <span class="material-icons">edit_calendar</span> <!-- 正确的图标名称 -->
+                <span class="menu-item-label">调课申请</span>
+            </a>
+            <a href="pushgrades" class="menu-item">
+                <span class="material-icons">assignment_turned_in</span> <!-- 正确的图标名称 -->
+                <span class="menu-item-label">提交成绩</span>
+            </a>
+            <a href="waiverreview" class="menu-item">
+                <span class="material-icons">how_to_reg</span> <!-- 正确的图标名称 -->
+                <span class="menu-item-label">免听审核</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

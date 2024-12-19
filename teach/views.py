@@ -1,17 +1,17 @@
 from django.shortcuts import render
-
-# Create your views here.
-
 from django.http import HttpResponse
+from rest_framework.urls import app_name
+
 
 def teach_index(request):
-    return render(request,'teach_index.html')
+    username='L1jiu'
+    return render(request, 'teach_index.html',context={'username':username})
 
 def teach_courselist(request):
-    return render(request,'teach_courselist.html')
+    return render(request, 'teach_courselist.html')
 
 def teach_pushgrades(request):
-    return render(request,'teach_pushgrades.html')
+    return render(request, 'teach_pushgrades.html')
 
 def teach_courseadapt(request):
     return render(request, 'teach_courseadapt.html')

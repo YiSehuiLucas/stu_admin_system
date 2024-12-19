@@ -6,4 +6,12 @@ urlpatterns = [
 
     path("index", views.teach_index ),
 
+    path("courselist", views.teach_courselist ),
+
+    path("courseadapt",views.teach_courseadapt ),
+
+    path("pushgrades",views.teach_pushgrades ),
+
+    path("waiverreview",views.teach_waiverreview ),
+
 ]

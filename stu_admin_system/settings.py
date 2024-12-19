@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "user.apps.UserConfig",
     "stu.apps.StuConfig",
-    "tech.apps.TechConfig",
+    "teach.apps.TechConfig",
     "admins.apps.AdminsConfig"
 ]
 

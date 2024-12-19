@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
     "stu.apps.StuConfig",
     "tech.apps.TechConfig",
-    "admin.apps.AdminConfig"
+    "admins.apps.AdminsConfig"
 ]
 
 MIDDLEWARE = [
@@ -80,8 +80,12 @@ WSGI_APPLICATION = "stu_admin_system.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "stu_admin_system",
+        "USER": "cloud",
+        "PASSWORD": "123456",
+        "HOST": "lucasyisehui.rwlb.rds.aliyuncs.com",
+        "PORT": "3306",
     }
 }
 

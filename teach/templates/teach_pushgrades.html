@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>学生成绩</title>
-    <link rel="stylesheet" href="{% static 'css/teach_pushgrades.css' %}">
+    <link rel="stylesheet" href="{% static 'css/teach_detail.css' %}">
 </head>
 <body>
 <form id="class-form" method="POST" action="">
@@ -30,7 +30,6 @@
     <div class="cell">分数</div>
     <div class="cell">操作</div>
   </div>
-
   {% for grade in grades %}
     <div class="row">
         <div class="cell" data-title="课程名称">{{ grade.cour_name }}</div>

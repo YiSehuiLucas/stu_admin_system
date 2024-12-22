@@ -1,10 +1,65 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>教师审核免听申请页面</title>
+    <title>审核免听申请</title>
+    <link rel="stylesheet" href="{% static 'css/teach_detail.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<a href="{% url 'teach_index' %}?stu={{ stu }}" class="top-right-button">返回</a>
+<h1 class="animated rotateIn">审核免听申请</h1>
+<div class="table" id="waiver-review-table">
+  <div class="row header blue">
+    <div class="cell">学生编号</div>
+    <div class="cell">学生姓名</div>
+    <div class="cell">课程名称</div>
+    <div class="cell">原因</div>
+    <div class="cell">状态</div>
+    <div class="cell">操作</div>
+  </div>
+
+  {% for waiver in waivers %}
+  <div class="row">
+    <div class="cell">{{ waiver.stu_id }}</div>
+    <div class="cell">{{ waiver.stu_name }}</div>
+    <div class="cell">{{ waiver.cour_name }}</div>
+    <div class="cell">{{ waiver.reason }}</div>
+    <div class="cell">{{ waiver.status }}</div>
+    <div class="cell">
+      {% if waiver.status == '未审核' %}
+        <button onclick="updateWaiverStatus({{ waiver.wa_id }}, '审核中')">同意</button>
+        <button onclick="updateWaiverStatus({{ waiver.wa_id }}, '否决')">否决</button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+function updateWaiverStatus(wa_id, status) {
+    $.ajax({
+        url: '{% url "teach_waiverreview" %}',
+        type: 'POST',
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'action': 'update_status',
+            'wa_id': wa_id,
+            'status': status
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                location.reload();
+            }
+        },
+        error: function() {
+            alert('无法更新记录，请稍后再试。');
+        }
+    });
+}
+</script>
 
 </body>
 </html>

@@ -499,3 +499,32 @@ p {
         }
     }
 }
+
+dialog {
+            border: none;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,.5);
+        }
+        dialog::backdrop {
+            background-color: rgba(0,0,0,.3);
+        }
+        .modal-header, .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            margin-bottom: 1rem;
+        }
+        .modal-button {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+        }
+        .modal-button:hover {
+            background-color: #0056b3;
+        }

@@ -1,6 +1,7 @@
 import json
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
+from django.urls import reverse
 from rest_framework.urls import app_name
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -118,13 +119,92 @@ def dictfetchall(cursor):
     ]
 
 
-
-
-
-
-
 def teach_courseadapt(request):
-    return render(request, 'teach_courseadapt.html')
+    teacher_id = '10001'  # 应该从认证系统获取当前用户的ID
+
+    if request.method == "GET":
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT ca.*, c.cour_name 
+                FROM CourseAdapt ca
+                JOIN Course c ON ca.cour_id = c.cour_id
+                WHERE ca.tch_id = %s;
+            """, [teacher_id])
+            course_adapts = dictfetchall(cursor)
+
+            # 获取教师所有课程列表
+            cursor.execute("""
+                SELECT tc.cour_id, c.cour_name
+                FROM TeacherCourse tc
+                JOIN Course c ON tc.cour_id = c.cour_id
+                WHERE tc.tch_id = %s;
+            """, [teacher_id])
+            courses = dictfetchall(cursor)
+
+        return render(request, 'teach_courseadapt.html', {
+            'course_adapts': course_adapts,
+            'courses': courses,
+            'teacher_id': teacher_id
+        })
+
+    elif request.method == "POST":
+        action = request.POST.get('action')
+
+        if action == 'submit':
+            cour_id = request.POST['cour_id']
+            week = request.POST['week']
+            classroom = request.POST['classroom']
+            dayofweek = request.POST['dayofweek']
+            timeslot = request.POST['timeslot']
+            reason = request.POST['reason']
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO CourseAdapt (tch_id, cour_id, week, classroom, dayofweek, timeslot, reason, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, '未审核');
+                """, [
+                    teacher_id,
+                    cour_id,
+                    week,
+                    classroom,
+                    dayofweek,
+                    timeslot,
+                    reason
+                ])
+            return redirect(reverse('teach_courseadapt'))
+
+
+        elif action == 'delete':
+            ca_id = request.POST.get('ca_id')
+            if not ca_id:
+                return HttpResponseBadRequest("Missing required parameter: ca_id")
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT COUNT(*) FROM CourseAdapt 
+                    WHERE ca_id = %s AND tch_id = %s;
+                """, [ca_id, teacher_id])
+
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    return JsonResponse(
+                        {'status': 'error', 'message': 'Record not found or does not belong to the current user.'})
+                cursor.execute("""
+                    DELETE FROM CourseAdapt 
+                    WHERE ca_id = %s AND tch_id = %s;
+                """, [ca_id, teacher_id])
+            return JsonResponse(
+                {'status': 'success', 'message': 'The course adaptation request has been successfully deleted.'})
+
+        else:
+            return HttpResponseBadRequest("Invalid action")
+
+    else:
+        return HttpResponseBadRequest("Unsupported HTTP method")
+
+
+
+
+
 
 def teach_waiverreview(request):
     return render(request, 'teach_waiverreview.html')

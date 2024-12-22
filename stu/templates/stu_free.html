@@ -1,0 +1,621 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>免听申请</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+
+<style>
+        /* 全局样式 */
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial;
+      font-size: 17px;
+      line-height: 20px;
+      font-weight: 400;
+      color: #3b3b3b;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      background: #e9edfc;
+    }
+
+    @media screen and (max-width: 580px) {
+      body {
+        font-size: 16px;
+        line-height: 22px;
+      }
+    }
+
+    /* 容器样式 */
+    .wrapper {
+      margin: 0 auto;
+      padding: 40px;
+      max-width: 800px;
+    }
+
+    /* 表格样式 */
+    .table {
+      margin: 0 0 40px 0;
+      width: 100%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      display: table;
+    }
+
+    @media screen and (max-width: 580px) {
+      .table {
+        display: block;
+      }
+    }
+
+    /* 行样式 */
+    .row {
+      display: table-row;
+      background: #f6f6f6;
+    }
+
+    .row:nth-of-type(odd) {
+      background: #e9e9e9;
+    }
+
+    .row.header {
+      font-weight: 900;
+      color: #ffffff;
+      background: #ea6153;
+    }
+
+    .row.green {
+      background: #27ae60;
+    }
+
+    .row.blue {
+      background: #7ca0b3;
+    }
+
+    @media screen and (max-width: 580px) {
+      .row {
+        padding: 14px 0 7px;
+        display: block;
+      }
+
+      .row.header {
+        padding: 0;
+        height: 6px;
+      }
+
+      .row.header .cell {
+        display: none;
+      }
+
+      .row .cell {
+        margin-bottom: 10px;
+      }
+
+      .row .cell:before {
+        margin-bottom: 3px;
+        content: attr(data-title);
+        min-width: 98px;
+        font-size: 15px;
+        line-height: 15px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #969696;
+        display: block;
+      }
+    }
+
+    /* 单元格样式 */
+    .cell {
+      padding: 15px 20px;
+      display: table-cell;
+    }
+
+    @media screen and (max-width: 580px) {
+      .cell {
+        padding: 5px 16px;
+        display: block;
+      }
+    }
+    /* 容器样式 */
+    .table-container {
+      position: relative; /* 确保子元素的绝对定位相对于这个容器 */
+      margin: 0 auto;
+      padding: 40px;
+      max-width: 800px;
+    }
+
+    /* 表格样式 */
+    .table {
+      margin: 0 0 40px 0;
+      width: 100%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      display: table;
+    }
+
+    /* 按钮样式 */
+    .bottom-right-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 10px; /* 调整按钮与表格边缘的距离 */
+      padding: 15px 25px;
+      background-color: #f69990; /* 与表头颜色一致 */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 17px;
+      transition: background-color 0.3s ease;
+    }
+
+    .bottom-right-button:hover {
+      background-color: #d75a4a; /* 悬停时的颜色变化 */
+    }
+
+    @import 'https://fonts.googleapis.com/css?family=Roboto:100,300';
+    @import 'https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.3.2/css/simple-line-icons.min.css';
+    @import 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css';
+    @import 'https://fonts.googleapis.com/css?family=Roboto+Mono:300,700';
+
+body {
+    width: 100%;
+    min-height: 1200px;
+    margin: 3em auto;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f7cac9+0,92a8d1+100 */
+    background: rgb(218, 213, 213);
+    /* Old browsers */
+    background: -moz-linear-gradient(-45deg, rgb(246, 246, 246) 0%, rgb(194, 207, 234) 100%);
+    /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, rgb(246, 246, 246) 0%, rgb(179, 195, 232) 100%);
+    /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, rgb(246, 246, 246) 0%, rgb(181, 188, 200) 100%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    /* IE6-9 fallback on horizontal gradient */
+
+    font-family: 'Roboto Mono';
+    letter-spacing: 1px;
+}
+
+h1 {
+    i {
+        position: relative;
+        font-size: 70px;
+    }
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 3em;
+    letter-spacing: 0px;
+    text-shadow: 1px 1px rgba(0,
+    0,
+    0,
+    0.02),
+    2px 2px rgba(0,
+    0,
+    0,
+    0.02),
+    3px 3px rgba(0,
+    0,
+    0,
+    0.02),
+    4px 4px rgba(0,
+    0,
+    0,
+    0.02),
+    5px 5px rgba(0,
+    0,
+    0,
+    0.02),
+    6px 6px rgba(0,
+    0,
+    0,
+    0.02),
+    7px 7px rgba(0,
+    0,
+    0,
+    0.02);
+}
+
+p {
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 2em;
+    line-height: 20px;
+    img {
+        position: relative;
+        top: 8px;
+        right: 10px;
+    }
+}
+.select {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    border-bottom: 0px;
+    border-radius: 3px;
+    font-size: 12px;
+    box-shadow: 0px 1em 2em -1.5em rgba(0, 0, 0, .5);
+    >i.toggle {
+        position: absolute;
+        z-index: 4;
+        right: 1.5em;
+        top: 1.6em;
+        color: #ccc
+    }
+    .title,
+    .placeholder {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 1.5em 2em;
+        background: rgba(255, 255, 255, 1);
+        border-top: 1px solid rgba(0, 0, 0, .05);
+        cursor: pointer;
+    }
+    &>input {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        display: block;
+        opacity: 0;
+        cursor: pointer;
+        &:checked {
+            ~i.toggle.icon-arrow-down {
+                display: none;
+            }
+            ~i.toggle.icon-arrow-up {
+                display: block;
+            }
+            div.options label.option .title {
+                display: none!important;
+            }
+        }
+        &:not(:checked) {
+            z-index: 4;
+            ~label.option {
+                >span.title {
+                    display: none;
+                }
+            }
+            ~i.toggle.icon-arrow-up {
+                display: none;
+            }
+            ~i.toggle.icon-arrow-down {
+                display: block;
+            }
+        }
+        &:disabled {
+            cursor: no-drop;
+        }
+    }
+    &>span.placeholder {
+        position: relative;
+        z-index: 0;
+        display: inline-block;
+        width: 100%;
+        color: #999;
+        border-top: 0px;
+    }
+    label.option {
+        display: block;
+        overflow: hidden;
+        z-index: 1;
+        width: 100%;
+        transition: all 1s ease-out;
+        span.title {
+            position: relative;
+            z-index: 2;
+            transition: background .3s ease-out;
+            i.icon {
+                padding-right: 8px;
+                color: rgba(146, 168, 209, 1);
+            }
+            &:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, .3);
+                box-shadow: inset 0px 1px 0px rgba(0, 0, 0, .1);
+            }
+        }
+        input {
+            display: none;
+            &:checked~span.title {
+                position: absolute;
+                display: block;
+                z-index: 3;
+                top: 0px;
+                font-size: 12px;
+                background: #fff;
+                border-top: 0px;
+                box-shadow: none;
+                color: inherit;
+                width: 100%;
+            }
+            &:disabled {
+                &~span.title {
+                    background: #f9f9f9!important;
+                    color: #aaa;
+                    &:hover {
+                        color: #aaa;
+                        background: none;
+                        cursor: no-drop;
+                    }
+                }
+            }
+        }
+    }
+}
+.select2 {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    margin: auto;
+    width: 330px;
+    height: 100%;
+    border-bottom: 0px;
+    border-radius: 3px;
+    font-size: 12px;
+    box-shadow: 0px 1em 2em -1.5em rgba(0, 0, 0, .5);
+    i.toggle {
+        position: absolute;
+        z-index: 4;
+        right: 1.5em;
+        top: 1.6em;
+        color: #ccc
+    }
+    .title,
+    .placeholder {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 1.5em 2em;
+        background: rgba(255, 255, 255, 1);
+        border-top: 1px solid rgba(0, 0, 0, .05);
+        cursor: pointer;
+    }
+    &>label>input {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        display: block;
+        opacity: 0;
+        cursor: pointer;
+        &:checked {
+            z-index: 2;
+            ~i.toggle.icon-plus {
+                display: none;
+            }
+            ~i.toggle.icon-minus {
+                display: block;
+            }
+        }
+        &:not(:checked) {
+            ~i.toggle.icon-minus {
+                display: none;
+            }
+            ~i.toggle.icon-plus {
+                display: block;
+            }
+            ~label.option input:not(:checked)~.title {
+                display: none!important;
+            }
+        }
+        &:disabled {
+            cursor: no-drop;
+        }
+    }
+    & label>span.placeholder {
+        position: relative;
+        z-index: 0;
+        display: inline-block;
+        width: 100%;
+        color: #999;
+        border-top: 0px;
+    }
+    label.option {
+        display: block;
+        overflow: hidden;
+        z-index: 1;
+        width: 100%;
+        transition: all 1s ease-out;
+        span.title {
+            position: relative;
+            z-index: 2;
+            transition: background .3s ease-out;
+            i.icon {
+                padding-right: 8px;
+                color: rgba(146, 168, 209, 1);
+            }
+            &:hover {
+                color: #fff;
+                background: rgba(146, 168, 209, .5);
+                box-shadow: inset 0px 1px 0px rgba(0, 0, 0, .1);
+            }
+        }
+        input {
+            display: none;
+            &:checked~span.title {
+                position: absolute;
+                display: block;
+                z-index: 1;
+                top: 0px;
+                font-size: 12px;
+                background: #fff;
+                border-top: 0px;
+                box-shadow: none;
+                color: inherit;
+                width: 100%;
+            }
+            &:disabled {
+                &~span.title {
+                    background: #f9f9f9!important;
+                    color: #aaa;
+                    &:hover {
+                        color: #aaa;
+                        background: none;
+                        cursor: no-drop;
+                    }
+                }
+            }
+        }
+    }
+}
+    /* 按钮样式 */
+    .buttonleft {
+      position: absolute;
+      top: 0;
+      lest: 0;
+      margin: 10px; /* 调整按钮与表格边缘的距离 */
+      padding: 15px 25px;
+      background-color: #f69990; /* 与表头颜色一致 */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 17px;
+      transition: background-color 0.3s ease;
+    }
+
+    .bottom-right-button:hover {
+      background-color: #d75a4a; /* 悬停时的颜色变化 */
+    }
+    /* 当模态框显示时，禁用页面其他部分的滚动和点击事件 */
+    body.modal-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    /* 确保模态框本身仍然可以点击 */
+    .modal {
+        pointer-events: auto;
+    }
+     /* 按钮样式 */
+    .button {
+        position: absolute;
+        margin: -25px; /* 调整按钮与表格边缘的距离 */
+        margin-left: 10px;
+        padding: 7px 12px;
+        background-color: #f69990; /* 与表头颜色一致 */
+        color: white;
+        border: none;
+        border-radius: 10px;
+         cursor: pointer;
+        font-size: 17px;
+        transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #d75a4a; /* 悬停时的颜色变化 */
+    }
+</style>
+</head>
+<body>
+<form id="status-form" method="POST" action="">
+    {% csrf_token %}
+    <h1 class="animated rotateIn">免 听 申 请</h1>
+    <div class="select animated zoomIn">
+        <!-- You can toggle select (disabled) -->
+        <input type="radio" name="optionnull" value = {{ str }}>
+        <i class="toggle icon icon-arrow-down"></i>
+        <i class="toggle icon icon-arrow-up"></i>
+        <span class="placeholder">{{ str }}</span>
+        {% for statu in status %}
+        <label class="option">
+            <input type="radio" name="option" value="{{ statu }}"require>
+            <span class="title animated fadeIn"><i class="icon icon-speedometer"></i>{{ statu }}</span>
+        </label>
+        {% endfor %}
+    </div>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 获取表单元素
+        const form = document.getElementById('status-form');
+
+        // 监听所有 radio 按钮的 change 事件
+        form.querySelectorAll('input[type="radio"][name="option"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                // 当用户选择一个选项时，自动提交表单
+                form.submit();
+            });
+        });
+    });
+</script>
+<div class="table">
+  <!-- 表头 -->
+  <div class="row header blue">
+      <div class="cell">课程代码</div>
+      <div class="cell">课程名称</div>
+      <div class="cell">教师姓名</div>
+      <div class="cell">申请理由</div>
+      <div class="cell">状态</div>
+      <div class="cell">行为</div>
+  </div>
+
+  <!-- 遍历用户列表 -->
+  {% for Ap in APlist %}
+    <div class="row">
+        <div class="cell" data-title="课程代码">{{ Ap.1 }}</div>
+        <div class="cell" data-title="课程名称">{{ Ap.2 }}</div>
+        <div class="cell" data-title="教师姓名">{{ Ap.3 }}</div>
+        <div class="cell" data-title="申请理由">{{ Ap.4 }}</div>
+        <div class="cell" data-title="状态">{{ Ap.5 }}</div>
+        <form method="POST" action="">
+        {% csrf_token %}
+            {% if Ap.5 == "未审核" %}
+                <input type="hidden" name="wa_id" value="{{ Ap.0 }}">
+                <button type="submit" name="action" value="uncommit" class="button">{{ "撤销" }}</button>
+            {% elif Ap.5 == "否决" %}
+                <button type="submit" name="action" value="" class="button">{{ "已答复" }}</button>
+            {% elif Ap.5 == "同意" %}
+                <button type="submit" name="action" value="" class="button">{{ "已答复" }}</button>
+            {% else %}
+                <button type="submit" name="action" value="" class="button">{{ "等待" }}</button>
+            {% endif %}
+        </form>
+    </div>
+  {% endfor %}
+  <!-- 右下角的按钮 -->
+    <a href="{% url 'stu_main' %}?stu_id={{ stu_id }}" class="bottom-right-button">返回</a>
+</div>
+<!-- 触发模态框的按钮 -->
+        <button id="openModalBtn" class="buttonleft">发起申请表</button>
+
+        <!-- 模态框 (隐藏) -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 style="text-align: center">免听申请表</h2>
+                <form id="applicationForm" method="POST">
+                    {% csrf_token %}
+                    <label for="course_tch">课程信息:</label>
+                    <select id="course_tch" name="course_tch" required>
+                        <option value="" disabled selected>选择相关课程</option>
+                        {% for course in courseslist %}
+                            <option value="{{ course.0 }}|{{ course.2 }}">{{ course.0 }} - {{ course.1 }}|{{ course.4 }}({{ course.2 }}-{{ course.3 }})</option>
+                        {% endfor %}
+                    </select>
+                    <label for="message">理由:</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+
+                    <button type="submit" id="submitBtn">提交申请</button>
+                </form>
+            </div>
+        </div>
+<script src="{% static 'JavaScript/script.js' %}"></script>
+</body>
+</html>

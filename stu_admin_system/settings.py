@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "user.apps.UserConfig",
     "stu.apps.StuConfig",
-    "tech.apps.TechConfig",
-    "admins.apps.AdminsConfig"
+    "admins.apps.AdminsConfig",
+    "teach.apps.TeachConfig",
 ]
 
 MIDDLEWARE = [
@@ -125,7 +125,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

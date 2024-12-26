@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员端 - 调课申请详情</title>
+
+    <style>
+         /* 通用样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f9fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* 按钮容器居中样式 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* 添加按钮间的间距 */
+            margin-top: 20px; /* 为按钮容器添加顶部间距 */
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>调课申请详情</h2>
+    <table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th>调课申请ID</th>
+            <td>{{ courseadapt.ca_id }}</td>
+        </tr>
+        <tr>
+            <th>课程ID</th>
+            <td>{{ courseadapt.cour_id.cour_id }}</td>
+        </tr>
+        <tr>
+            <th>课程名称</th>
+            <td>{{ courseadapt.cour_id.cour_name }}</td>
+        </tr>
+        <tr>
+            <th>教师ID</th>
+            <td>{{ courseadapt.tch_id.tch_id }}</td>
+        </tr>
+        <tr>
+            <th>教师姓名</th>
+            <td>{{ courseadapt.tch_id.tch_name }}</td>
+        </tr>
+        <tr>
+            <th>课程原周数</th>
+            <td>{{ courseadapt.week }}</td>
+        </tr>
+        <tr>
+            <th>申请调课教室</th>
+            <td>{{ courseadapt.classroom }}</td>
+        </tr>
+        <tr>
+            <th>申请调至周几</th>
+            <td>{{ courseadapt.dayofweek }}</td>
+        </tr>
+        <tr>
+            <th>申请时间段</th>
+            <td>{{ courseadapt.timeslot }}</td>
+        </tr>
+        <tr>
+            <th>申请理由</th>
+            <td>{{ courseadapt.reason }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    {% if courseadapt.status == '未审核' %}
+        <form method="post" action="{% url 'courseadapt_review' ca_id=courseadapt.ca_id %}">
+        <div class="button-container">
+            <button type="submit" name="approve" class="btn btn-success">同意</button>
+            <button type="submit" name="reject" class="btn btn-danger">拒绝</button>
+        </div>
+        </form>
+    {% endif %}
+</div>
+</body>
+</html>

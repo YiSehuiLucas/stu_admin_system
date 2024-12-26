@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员端 - 免听申请列表</title>
+
+    <!-- 引入 loading.css -->
+    <link rel="stylesheet" href="static/loading.css">
+
+    <style>
+        /* 通用样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f9fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        /* 页面加载完成后显示内容 */
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* 自定义表头样式 */
+        thead {
+            background-color: #007bff;
+        }
+
+        th {
+            color: white;
+            font-weight: bold;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        /* 自定义筛选栏样式 */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-bar .form-control {
+            width: 200px;
+            margin-right: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-bar .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .filter-bar select {
+            width: 150px;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-bar button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-bar button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 美化表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* 红点样式 */
+        .new-application::after {
+            content: '•';
+            color: red;
+            font-size: 20px;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            padding-left: 0;
+            list-style-type: none;
+        }
+
+        .pagination .page-item .page-link {
+            color: #007bff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .pagination .page-item:hover .page-link {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .pagination .active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+
+        .pagination .disabled .page-link {
+            color: #ddd;
+        }
+
+        .pagination .page-link:focus {
+            outline: none;
+        }
+
+        .pagination .current{
+            margin: 0 10px;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-bar .form-control {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .filter-bar button {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            table, th, td {
+                font-size: 14px;
+            }
+
+            .pagination {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 加载动画 -->
+    <div id="loading" class="wheel-and-hamster">
+        <div class="wheel"></div>
+        <div class="spoke"></div>
+        <div class="hamster">
+            <div class="hamster__head">
+                <div class="hamster__ear"></div>
+                <div class="hamster__eye"></div>
+                <div class="hamster__nose"></div>
+            </div>
+            <div class="hamster__body">
+                <div class="hamster__limb--fr"></div>
+                <div class="hamster__limb--fl"></div>
+                <div class="hamster__limb--br"></div>
+                <div class="hamster__limb--bl"></div>
+                <div class="hamster__tail"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面主要内容 -->
+    <div class="container">
+        <h1>免听申请列表</h1>
+
+        <!-- 搜索和筛选栏 -->
+        <form method="get" action="{% url 'waiverapplication_list' %}" class="filter-bar">
+            <div class="form-group">
+                <input type="text" name="q" placeholder="搜索课程ID或教师ID" value="{{ search_query }}" class="form-control">
+                <button type="submit" class="btn btn-primary">搜索</button>
+            </div>
+            <div class="form-group">
+                <label for="status" class="mr-2">申请状态:</label>
+                <select id="status" name="status" class="form-control">
+                    <option value="">全部</option>
+                    {% for value, label in statuses %}
+                        <option value="{{ value }}" {% if filter_status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">筛选</button>
+            </div>
+        </form>
+
+        <!-- 免听申请表格 -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>免听申请ID</th>
+                    <th>学生ID</th>
+                    <th>教师ID</th>
+                    <th>课程ID</th>
+                    <th>课程名</th>
+                    <th>申请状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>{{ app.wa_id }}</td>
+                    <td>{{ app.stu_id }}</td>
+                    <td>{{ app.tch_id }}</td>
+                    <td>{{ app.cour_id }}</td>
+                    <td>{{ app.cour_name }}</td>
+                    <td>
+                        {% if app.status == '待管理员审核' %}
+                            <span class="new-application"> 待管理员审核</span>
+                        {% else %}
+                            {{ app.status }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'waiverapplication_detail' wa_id=app.wa_id %}" class="btn btn-info btn-sm">查看</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center">未找到调课申请。</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <nav aria-label="调课申请列表分页">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&q={{ search_query }}&status={{ filter_status }}">首页</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&status={{ filter_status }}" aria-label="上一页">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&laquo;</span>
+                    </li>
+                {% endif %}
+
+                <span class="current">
+                    第 {{ page_obj.number }} 页，共 {{ paginator.num_pages }} 页
+                </span>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&status={{ filter_status }}" aria-label="下一页">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ paginator.num_pages }}&q={{ search_query }}&status={{ filter_status }}">尾页</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 加载动画的 JavaScript 控制 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var loading = document.getElementById('loading');
+            var body = document.body;
+            loading.style.display = 'none';
+            body.classList.add('loaded');
+        });
+    </script>
+</body>
+</html>

@@ -7,8 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def stu_main(request):
-    #stu_id = request.GET.get('stu_id')
-    stu_id='E12214005'
+    stu_id = request.GET.get('stu_id')
     cursor = connection.cursor()
     sql = '''SELECT stu_name as 学生姓名
                 FROM student

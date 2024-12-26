@@ -20,4 +20,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path("stu/",include("stu.urls")),
+
+    path("teach/",include("teach.urls")),
 ]

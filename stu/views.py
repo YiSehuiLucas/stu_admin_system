@@ -7,11 +7,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def stu_main(request):
-    stu_id = request.GET.get('stu_id')
+    #stu_id = request.GET.get('stu_id')
+    stu_id='E12214005'
     cursor = connection.cursor()
     sql = '''SELECT stu_name as 学生姓名
                 FROM student
-                WHERE stu_id=%s;'''
+                WHERE stu_id = %s;'''
     cursor.execute(sql,stu_id)
     stu = cursor.fetchall()
     stu=stu[0][0]
@@ -86,7 +87,7 @@ def stu_select(request):
             cursor = connection.cursor()
             sql = '''SELECT courseschedule.tch_id as 教师号
                             FROM courseschedule
-                            WHERE courseschedule.cour_id= %s;'''
+                            WHERE courseschedule.cour_id = %s;'''
             cursor.execute(sql,(course_id))
             teacher_id = cursor.fetchall()
             cursor.close()
@@ -155,7 +156,7 @@ def stu_select(request):
                                FROM courseschedule,course,teacher,studentcourse
                                WHERE courseschedule.cour_id=course.cour_id
                                and courseschedule.tch_id=teacher.tch_id
-                               and studentcourse.stu_id=%s
+                               and studentcourse.stu_id = %s
                                and studentcourse.cour_id=course.cour_id
                                and studentcourse.tch_id=teacher.tch_id;'''
             cursor.execute(sql, stu_id)
@@ -231,7 +232,7 @@ def stu_select(request):
                                FROM courseschedule,course,teacher,studentcourse
                                WHERE courseschedule.cour_id=course.cour_id
                                and courseschedule.tch_id=teacher.tch_id
-                               and studentcourse.stu_id=%s
+                               and studentcourse.stu_id = %s
                                and studentcourse.cour_id=course.cour_id
                                and studentcourse.tch_id=teacher.tch_id;'''
             cursor.execute(sql, stu_id)
@@ -292,7 +293,7 @@ def stu_grade(request):
             grade.grade as 成绩,
             course.cour_credits as 学分
             FROM grade, student,course
-            WHERE grade.stu_id= %s
+            WHERE grade.stu_id = %s
             and grade.cour_id = course.cour_id
             and grade.stu_id = student.stu_id;'''
     cursor.execute(sql,stu_id)
@@ -302,7 +303,7 @@ def stu_grade(request):
     cursor = connection.cursor()
     sql = '''SELECT sum(course.cour_credits) as 总学分
                 FROM grade, student,course
-                WHERE grade.stu_id= %s
+                WHERE grade.stu_id = %s
                 and grade.cour_id = course.cour_id
                 and grade.stu_id = student.stu_id
                 and grade.grade >= 60;'''
@@ -329,7 +330,7 @@ def stu_grade(request):
                 grade.grade as 成绩,
                 course.cour_credits as 学分
                 FROM grade, student,course
-                WHERE grade.stu_id= %s
+                WHERE grade.stu_id = %s
                 and grade.cour_id = course.cour_id
                 and grade.stu_id = student.stu_id
                 and course.cour_semester = %s;'''
@@ -339,7 +340,7 @@ def stu_grade(request):
         cursor = connection.cursor()
         sql = '''SELECT sum(course.cour_credits) as 总学分
                         FROM grade, student,course
-                        WHERE grade.stu_id= %s
+                        WHERE grade.stu_id = %s
                         and grade.cour_id = course.cour_id
                         and grade.stu_id = student.stu_id
                         and course.cour_semester = %s
@@ -379,7 +380,7 @@ def stu_course(request):
                            and courseschedule.tch_id=teacher.tch_id
                            and courseschedule.cour_id=studentcourse.cour_id
                            and studentcourse.tch_id=courseschedule.tch_id
-                           and studentcourse.stu_id=%s;'''
+                           and studentcourse.stu_id = %s;'''
         cursor.execute(sql,stu_id)
         courses_stu = cursor.fetchall()
         cursor.close()
@@ -404,7 +405,7 @@ def stu_course(request):
                            and courseschedule.tch_id=teacher.tch_id
                            and courseschedule.cour_id=studentcourse.cour_id
                            and studentcourse.tch_id=courseschedule.tch_id
-                           and studentcourse.stu_id=%s
+                           and studentcourse.stu_id = %s
                            and course.cour_semester = %s;'''
         cursor.execute(sql, (stu_id,str))
         courses_stu = cursor.fetchall()
@@ -428,7 +429,7 @@ def stu_free(request):
                        and courseschedule.tch_id=teacher.tch_id
                        and courseschedule.cour_id=studentcourse.cour_id
                        and studentcourse.tch_id=courseschedule.tch_id
-                       and studentcourse.stu_id=%s;'''
+                       and studentcourse.stu_id = %s;'''
     cursor.execute(sql, stu_id)
     courseslist = cursor.fetchall()
     cursor.close()
@@ -443,7 +444,7 @@ def stu_free(request):
                            FROM WaiverApplication,course,teacher
                            WHERE WaiverApplication.cour_id=course.cour_id
                            and WaiverApplication.tch_id=teacher.tch_id
-                           and WaiverApplication.stu_id=%s;'''
+                           and WaiverApplication.stu_id = %s;'''
         cursor.execute(sql, (stu_id))
         APlist = cursor.fetchall()
         cursor.close()
@@ -465,8 +466,8 @@ def stu_free(request):
                                FROM WaiverApplication,course,teacher
                                WHERE WaiverApplication.cour_id=course.cour_id
                                and WaiverApplication.tch_id=teacher.tch_id
-                               and WaiverApplication.stu_id=%s
-                               and WaiverApplication.status=%s;'''
+                               and WaiverApplication.stu_id = %s
+                               and WaiverApplication.status = %s;'''
             cursor.execute(sql, (stu_id,str))
             APlist = cursor.fetchall()
             cursor.close()
@@ -481,7 +482,7 @@ def stu_free(request):
                                FROM WaiverApplication,course,teacher
                                WHERE WaiverApplication.cour_id=course.cour_id
                                and WaiverApplication.tch_id=teacher.tch_id
-                               and WaiverApplication.stu_id=%s;'''
+                               and WaiverApplication.stu_id = %s;'''
             cursor.execute(sql, (stu_id))
             APlist = cursor.fetchall()
             cursor.close()
@@ -509,7 +510,7 @@ def stu_free(request):
                                FROM WaiverApplication,course,teacher
                                WHERE WaiverApplication.cour_id=course.cour_id
                                and WaiverApplication.tch_id=teacher.tch_id
-                               and WaiverApplication.stu_id=%s;'''
+                               and WaiverApplication.stu_id = %s;'''
             cursor.execute(sql, (stu_id))
             APlist = cursor.fetchall()
             cursor.close()
@@ -531,7 +532,7 @@ def stu_free(request):
                               FROM WaiverApplication,course,teacher
                               WHERE WaiverApplication.cour_id=course.cour_id
                               and WaiverApplication.tch_id=teacher.tch_id
-                              and WaiverApplication.stu_id=%s;'''
+                              and WaiverApplication.stu_id = %s;'''
             cursor.execute(sql, (stu_id))
             APlist = cursor.fetchall()
             cursor.close()

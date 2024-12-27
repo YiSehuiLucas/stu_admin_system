@@ -15,10 +15,20 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> e1c9185 (first commit)
     <orderEntry type="jdk" jdkName="Python 3.13" jdkType="Python SDK" />
 =======
     <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
 >>>>>>> 3f3a803 (1)
+<<<<<<< HEAD
+=======
+=======
+    <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+>>>>>>> 42ca4fe (login)
+>>>>>>> e1c9185 (first commit)
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">

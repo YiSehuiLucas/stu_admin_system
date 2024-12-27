@@ -4,10 +4,20 @@
 <<<<<<< HEAD
     <option name="sdkName" value="Python 3.11 (Learn01)" />
   </component>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> e1c9185 (first commit)
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13" project-jdk-type="Python SDK" />
 =======
     <option name="sdkName" value="Python 3.12" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
 >>>>>>> 3f3a803 (1)
+<<<<<<< HEAD
+=======
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
+>>>>>>> 42ca4fe (login)
+>>>>>>> e1c9185 (first commit)
 </project>

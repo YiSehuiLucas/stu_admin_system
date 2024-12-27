@@ -6,6 +6,8 @@ from rest_framework.urls import app_name
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db import connection, transaction
+from django.shortcuts import render
+from django.http import HttpResponse
 
 def teach_index(request):
     tch_id = request.GET.get('tch_id')

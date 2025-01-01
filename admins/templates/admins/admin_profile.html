@@ -140,8 +140,9 @@
         </tbody>
     </table>
 {#    <div class="button-container">#}
-        <a href="{% url 'admin_edit' user_id=admin.admin_id.user_id %}" class="btn btn-edit">编辑</a>
-        <a href="{% url 'admin_dashboard' user_id=admin.admin_id.user_id %}" class="btn btn-secondary">返回</a>
+    <div style="height: 15px"></div>
+        <a href="{% url 'admin_edit' user_id=user_id %}" class="btn btn-edit" style="margin-left: auto">编辑</a>
+{#        <a href="{% url 'admin_dashboard' user_id=user_id %}" class="btn btn-secondary">返回</a>#}
     </div>
 </div>
 </body>

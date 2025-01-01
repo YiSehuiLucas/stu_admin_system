@@ -8,11 +8,11 @@ class AdminProfileForm(forms.ModelForm):
     class Meta:
         model = Admin
         fields = ['admin_name', 'admin_phnum']
+
     def clean_current_password(self):
         current_password = self.cleaned_data.get('current_password')
         if current_password:
-            user = self.instance.admin_id.user
-            if not check_password(current_password, user.password):
+            if not check_password(current_password, self.instance.password):  # 直接检查实例的密码
                 raise forms.ValidationError('当前密码不正确。')
         return current_password
     def clean_new_password(self):

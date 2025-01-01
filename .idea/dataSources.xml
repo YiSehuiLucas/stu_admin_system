@@ -1,40 +1,12 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> e1c9185 (first commit)
-    <data-source source="LOCAL" name="@lucasyisehui.rwlb.rds.aliyuncs.com" uuid="4e75a5fa-46ad-4e6f-8147-388bc27d1f74">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://lucasyisehui.rwlb.rds.aliyuncs.com:3306</jdbc-url>
-<<<<<<< HEAD
-=======
-=======
-    <data-source source="LOCAL" name="cloud" uuid="b3392ffc-c72d-498c-930d-e72c1d68541b">
+    <data-source source="LOCAL" name="stu_admin_system" uuid="1ffa89ae-4326-41dd-b6dd-cea4e020fa8d">
       <driver-ref>mysql_aurora_aws</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>software.aws.rds.jdbc.mysql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql:aws://lucasyisehui.rwlb.rds.aliyuncs.com:3306/stu_admin_system</jdbc-url>
->>>>>>> 42ca4fe (login)
->>>>>>> e1c9185 (first commit)
+      <jdbc-url>jdbc:mysql:aws://lucasyisehui.rwlb.rds.aliyuncs.com:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
-=======
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@lucasyisehui.rwlb.rds.aliyuncs.com" uuid="61822171-2012-4e93-89d1-67ff77695af8">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://lucasyisehui.rwlb.rds.aliyuncs.com:3306</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-  </component>
->>>>>>> 3f3a803 (1)
 </project>

@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>教师首页</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/teach_index.css' %}">
@@ -10,7 +11,7 @@
 <body>
     <div class="page-container">
         <h1 class="page-title">欢迎使用教务管理系统</h1>
-        <p class="page-title">{{ username }}</p>
+        <p class="page-title">{{ username }}老师</p>
         <nav class="menu">
             <a href={% url 'teach_courselist' %}?tch_id={{ tch_id }} class="menu-item" title="查看课表">
                 <span class="material-icons">event</span>

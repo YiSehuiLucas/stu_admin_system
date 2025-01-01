@@ -9,6 +9,7 @@ from django.db import connection, transaction
 from django.shortcuts import render
 from django.http import HttpResponse
 
+
 def teach_index(request):
     tch_id = request.GET.get('tch_id')
     cursor = connection.cursor()
@@ -19,7 +20,7 @@ def teach_index(request):
     tch_name = cursor.fetchall()
     tch_name = tch_name[0][0]
     cursor.close()
-    return render(request, 'teach_index.html',context={'tch_id':tch_id,'username':tch_name})
+    return render(request, 'teach_index.html', context={'tch_id': tch_id, 'username': tch_name})
 
 
 def teach_courselist(request):
@@ -88,7 +89,6 @@ def teach_pushgrades(request):
         'tch_id': tch_id
     }
     return render(request, 'teach_pushgrades.html', context)
-
 
 
 def get_classes_by_teacher(teacher_id):
@@ -227,4 +227,4 @@ def teach_waiverreview(request):
         """, [tch_id])
         waivers = [{'wa_id': row[0], 'stu_id': row[1], 'stu_name': row[2], 'cour_name': row[3], 'reason': row[4],
                     'status': row[5]} for row in cursor.fetchall()]
-    return render(request, 'teach_waiverreview.html', {'waivers': waivers,'tch_id': tch_id})
+    return render(request, 'teach_waiverreview.html', {'waivers': waivers, 'tch_id': tch_id})

@@ -173,8 +173,9 @@
 
 <div class="login">
     <h1>教 务 系 统 登 陆</h1>
-
-    <div style="margin-left: auto; margin-right: auto">
+    <form method="post" action="">
+    {% csrf_token %}
+    <div style="width: 172px; margin-right: auto; margin-left: auto">
         <div class="container">
             <div class="pane">
                 <label class="label">
@@ -194,7 +195,7 @@
         </div>
     </div>
     <div style="height: 20px"></div>
-    <form method="post">
+
         <input type="text" name="user" placeholder="用 户 名" required="required"/>
         <input type="password" name="pwd" placeholder="密 码" required="required"/>
         <button type="submit" class="btn btn-primary btn-block btn-large">登 陆</button>

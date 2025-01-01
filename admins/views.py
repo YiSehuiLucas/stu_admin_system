@@ -3,8 +3,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Teacher, CourseAdapt, User,Depart,TeacherDepart,WaiverApplication,Admin
-from .forms import TeacherForm, TeacherImportForm,CourseAdaptReviewForm,AdminProfileForm
+from .models import Teacher, CourseAdapt, User, Depart, TeacherDepart, WaiverApplication, Admin, Student
+from .forms import TeacherForm, TeacherImportForm, CourseAdaptReviewForm, AdminProfileForm
 import csv
 from io import TextIOWrapper
 from django.db import connection, DatabaseError
@@ -12,10 +12,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db import transaction
 import logging
+from django.views.decorators.http import require_http_methods
 logger = logging.getLogger(__name__)
+
 
 def is_admin(user):
     return user.is_authenticated and user.identity == '管理员'
+
 
 # @login_required
 # @user_passes_test(is_admin)
@@ -26,7 +29,8 @@ def admin_dashboard(request, user_id):
         messages.error(request, '管理员信息不存在。')
         return redirect('login')  # 重定向到登录页面或其他适当的页面
 
-    return render(request, 'admins/admin_dashboard.html', {'admin': admin,})
+    return render(request, 'admins/admin_dashboard.html', {'admin': admin, })
+
 
 def admin_profile(request, user_id):
     try:
@@ -49,7 +53,9 @@ def admin_profile(request, user_id):
     return render(request, 'admins/admin_profile.html', {
         'admin': admin,
         'form': form,
+        'user_id': user_id
     })
+
 
 def admin_edit(request, user_id):
     admin = Admin.objects.select_related('admin_id__admin').get(admin_id__user_id=user_id)
@@ -63,12 +69,14 @@ def admin_edit(request, user_id):
             messages.error(request, '请修正表单中的错误。')
     else:
         form = AdminProfileForm(instance=admin)
-    return render(request,'admins/admin_edit.html',{
+    return render(request, 'admins/admin_edit.html', {
         'admin': admin,
         'form': form,
     })
 
-    #-----------------------------------以下是教师列表部分--------------------------------------
+    # -----------------------------------以下是教师列表部分--------------------------------------
+
+
 # @login_required
 # @user_passes_test(is_admin)
 def teacher_list(request):
@@ -158,6 +166,7 @@ def teacher_list(request):
     # 渲染模板
     return render(request, 'admins/teacher_list.html', context)
 
+
 # @login_required
 # @user_passes_test(is_admin)
 def teacher_create(request):
@@ -231,6 +240,7 @@ def teacher_create(request):
     else:
         return render(request, 'admins/teacher_form.html')
 
+
 # @login_required
 # @user_passes_test(is_admin)
 def teacher_edit(request, tch_id):
@@ -300,6 +310,7 @@ def teacher_edit(request, tch_id):
     else:
         return render(request, 'admins/teacher_edit.html', {'teacher': teacher})
 
+
 # @login_required
 # @user_passes_test(is_admin)
 def teacher_delete(request, tch_id):
@@ -309,6 +320,7 @@ def teacher_delete(request, tch_id):
         messages.success(request, '教师信息删除成功')
         return redirect('teacher_list')
     return render(request, 'admins/teacher_confirm_delete.html', {'teacher': teacher})
+
 
 # @login_required
 # @user_passes_test(is_admin)
@@ -381,7 +393,8 @@ def teacher_import(request):
 
     return render(request, 'admins/teacher_import.html')
 
-#------------------------------以下是调课审核功能-----------------------------------------------------
+
+# ------------------------------以下是调课审核功能-----------------------------------------------------
 # @login_required
 # @user_passes_test(is_admin)
 def courseadapt_list(request):
@@ -439,6 +452,7 @@ def courseadapt_list(request):
         'page': page
     })
 
+
 # @login_required
 # @user_passes_test(is_admin)
 def courseadapt_review(request, ca_id):
@@ -449,18 +463,19 @@ def courseadapt_review(request, ca_id):
             courseadapt.status = '同意'
             courseadapt.save()
             messages.success(request, '调课申请已同意')
-            return redirect('courseadapt_list')
+            return redirect('courseadapt_review')
         elif 'reject' in request.POST:
             # 处理拒绝申请
             courseadapt.status = '拒绝'
             courseadapt.save()
             messages.success(request, '调课申请已拒绝')
-            return redirect('courseadapt_list')
+            return redirect('courseadapt_review')
     else:
         form = CourseAdaptReviewForm()
     return render(request, 'admins/courseadapt_review.html', {'courseadapt': courseadapt})
 
-#------------------------------以下是免听审核功能------------------------------------------------------------
+
+# ------------------------------以下是免听审核功能------------------------------------------------------------
 def waiverapplication_list(request):
     # 获取查询参数
     search_query = request.GET.get('q', '').strip()
@@ -567,6 +582,7 @@ def waiverapplication_list(request):
         'page_obj': page_obj,
     })
 
+
 def waiverapplication_detail(request, wa_id):
     application = get_object_or_404(WaiverApplication, wa_id=wa_id)
 
@@ -586,3 +602,129 @@ def waiverapplication_detail(request, wa_id):
         return redirect('admins/waiverapplication_list')
 
     return render(request, 'admins/waiverapplication_detail.html', {'application': application})
+
+
+def student_list(request):
+    # 获取搜索参数，默认为空字符串
+    search_query = request.GET.get('q', '').strip()
+    params = []
+    conditions = []
+
+    # 构建查询语句
+    query = """
+        SELECT student.stu_id,
+               student.stu_name,
+               student.stu_phnum,
+               student.stu_semester,
+               major.major_name
+        FROM student,
+             major
+        WHERE major.major_name IN (
+            SELECT major.major_name
+            FROM major
+            WHERE major.major_id IN (
+                SELECT studentmajor.major_id
+                FROM studentmajor
+                WHERE studentmajor.stu_id = student.stu_id
+            )
+        )
+    """
+    # 添加搜索条件
+    if search_query:
+        conditions.append("(student.stu_id LIKE %s OR student.stu_name LIKE %s)")
+        params.extend([f"%{search_query}%", f"%{search_query}%"])
+
+    # 判断是否需要拼接搜索条件
+    if conditions:
+        # 如果主查询已有 WHERE，则添加 AND
+        if "WHERE" in query:
+            query += " AND " + " AND ".join(conditions)
+        else:
+            query += " WHERE " + " AND ".join(conditions)
+
+    # 添加分页参数
+    paginate_by = 10
+    page = request.GET.get('page', 1)
+    offset = (int(page) - 1) * paginate_by
+    query += " ORDER BY student.stu_id LIMIT %s OFFSET %s"
+    params.append(paginate_by)
+    params.append(offset)
+
+    # 执行查询
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        students = cursor.fetchall()
+
+    # 获取总记录数
+    count_query = """
+        SELECT COUNT(DISTINCT student.stu_id)
+        FROM 
+            student
+    """
+    if conditions:
+        count_query += " WHERE " + " AND ".join(conditions)
+
+    with connection.cursor() as cursor:
+        cursor.execute(count_query, params[:-2])  # 排除 LIMIT 和 OFFSET 参数
+        total = cursor.fetchone()[0]
+
+    # 创建分页器
+    paginator = Paginator(range(total), paginate_by)
+    page_obj = paginator.page(page)
+
+    # 准备学生数据
+    student_data = []
+    for student in students:
+        student_data.append({
+            'stu_id': student[0],
+            'stu_name': student[1],
+            'stu_phnum': student[2],
+            'stu_semester': student[3],
+            'stu_major': student[4]
+        })
+        print(f"{student[0]} {student[1]} {student[2]} {student[3]} {student[4]}")
+
+    # 准备上下文
+    context = {
+        'student_data': student_data,
+        'search_query': search_query,
+        'paginator': paginator,
+        'page_obj': page_obj,
+    }
+
+    # 渲染模板
+    return render(request, 'admins/student_list.html', context)
+
+@require_http_methods(['GET', 'POST'])
+def student_edit(request, stu_id):
+    if request.method == 'GET':
+        cursor = connection.cursor()
+        sql = '''
+        select stu_name
+        from student
+        where stu_id=%s
+        '''
+        cursor.execute(sql, stu_id)
+        stu_name = cursor.fetchall()
+        stu_name = stu_name[0][0]
+        print(stu_name)
+        return render(request, 'admins/student_edit.html', {"stu_name": stu_name,
+                                                            "stu_id": stu_id})
+    elif request.method == 'POST':
+        stu_name = request.POST.get('stu_name')
+        stu_phone = request.POST.get('stu_phone')
+        stu_semester = request.POST.get('stu_semester')
+        print(f"{stu_name} {stu_phone} {stu_semester}")
+        return render(request, 'admins/student_list.html')
+
+@require_http_methods(['GET', 'POST'])
+def student_create(request):
+    if request.method == 'GET':
+        return render(request, 'admins/student_create.html')
+    pass
+
+
+@require_http_methods(['GET', 'POST'])
+def student_import(request):
+    pass
+

@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员仓库信息</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.4.1/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/show_product.css">
+    <style>
+        .product_show {
+            width: 850px;
+            height: 600px;
+        {#border: 1px solid gray;#} margin-right: auto;
+            margin-left: auto;
+            margin-top: 50px;
+        }
+
+        .inline-block {
+            display: inline-block;
+            width: 222px;
+            height: 200px;
+        {#background-color: lightblue;#} margin: 12px;
+        }
+
+        td {
+            text-align: center;
+            vertical-align: middle;
+            line-height: 20px; /*垂直剧中*/
+        }
+
+        /* From Uiverse.io by Na3ar-17 */
+        .radio-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-input * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        .radio-input label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0px 20px;
+            width: 220px;
+            cursor: pointer;
+            height: 50px;
+            position: relative;
+        }
+
+        .radio-input label::before {
+            position: absolute;
+            content: "";
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 220px;
+            height: 45px;
+            z-index: -1;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 10px;
+            border: 2px solid transparent;
+        }
+
+        .radio-input label:hover::before {
+            transition: all 0.2s ease;
+            background-color: #2a2e3c;
+        }
+
+        .radio-input .label:has(input:checked)::before {
+            background-color: #2d3750;
+            border-color: #435dd8;
+            height: 50px;
+        }
+
+        .radio-input .label .text {
+            color: #fff;
+        }
+
+        .radio-input .label input[type="radio"] {
+            background-color: #202030;
+            appearance: none;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .radio-input .label input[type="radio"]:checked {
+            background-color: #435dd8;
+            -webkit-animation: puls 0.7s forwards;
+            animation: pulse 0.7s forwards;
+        }
+
+        .radio-input .label input[type="radio"]:before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            transition: all 0.1s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background-color: #fff;
+            transform: scale(0);
+        }
+
+        .radio-input .label input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+{#导航条#}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" onclick="location.reload()">武 器</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href={% url 'admin_warehouse' %}?admin={{ admin }}>仓 库</a></li>
+                <li><a href="{% url 'admin_orders' %}?admin={{ admin }}">订 单</a></li>
+                <li><a href="{% url 'warehouse_info' %}?admin={{ admin }}">仓 库 信 息</a></li>
+                <li><a href="{% url 'admin_main' %}?admin={{ admin }}">首 页</a></li>
+
+            </ul>
+            </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">登出</a></li>
+                <li class="dropdown">
+                    <a class="navbar-brand" href="#">个人信息</a>
+            </ul>
+            </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<h1 style="text-align: center">仓 库 枪 械 信 息</h1>
+<div style="width: 800px; height: 1000px; border: 2px solid red; margin: auto">
+    <div style="width: 200px; height: 300px; border: 2px solid red; margin-right: auto">
+        <div class="radio-input">
+            <label class="label">
+                <input
+                        type="radio"
+                        id="value-1"
+                        checked=""
+                        name="value-radio"
+                        value="value-1"
+                />
+                <p class="text">全 部 枪 械</p>
+            </label>
+            <label class="label">
+                <input type="radio" id="value-2" name="value-radio" value="value-2"/>
+                <p class="text">手 枪</p>
+            </label>
+            <label class="label">
+                <input type="radio" id="value-3" name="value-radio" value="value-3"/>
+                <p class="text">步 枪</p>
+            </label>
+            <label class="label">
+                <input type="radio" id="value-3" name="value-radio" value="value-3"/>
+                <p class="text">狙 击 枪</p>
+            </label>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

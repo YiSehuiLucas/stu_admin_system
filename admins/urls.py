@@ -23,5 +23,8 @@ urlpatterns = [
     path('students/<str:stu_id>/edit', views.student_edit, name='student_edit'),
     path('students/create', views.student_create, name='student_create'),
     path('teachers/import', views.student_import, name='student_import'),
+
+    path('courser/all/', views.show_courser, name='all_coursers'),
+    path('courser/plan/', views.courser_plan, name='courser_plan')
     # path('students/<str:stu_id>/delete', views.student_delete, name='student_delete'),
 ]

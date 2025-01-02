@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员仓库订单</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.4.1/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/show_product.css">
+    <style>
+        .product_show {
+            width: 850px;
+            height: 600px;
+        {#border: 1px solid gray;#} margin-right: auto;
+            margin-left: auto;
+            margin-top: 50px;
+        }
+
+        .inline-block {
+            display: inline-block;
+            width: 222px;
+            height: 200px;
+        {#background-color: lightblue;#} margin: 12px;
+        }
+
+        td {
+            text-align: center;
+            vertical-align: middle;
+            line-height: 20px; /*垂直剧中*/
+        }
+    </style>
+</head>
+<body>
+{#导航条#}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" onclick="location.reload()">武 器</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'admin_warehouse' %}?admin={{ admin }}">仓 库</a></li>
+                <li><a href="{% url 'admin_orders' %}?admin={{ admin }}">订 单</a></li>
+                <li><a href="{% url 'admin_main' %}?admin={{ admin }}">首 页</a></li>
+            </ul>
+
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">登出</a></li>
+                <li class="dropdown">
+                    <a class="navbar-brand" href="#">个人信息</a>
+            </ul>
+            </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+{#订单列表#}
+<div class="product_show">
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th style="text-align: center">订单号</th>
+            <th style="text-align: center">武器号</th>
+            <th style="text-align: center">下单时间</th>
+            <th style="text-align: center">订单状态</th>
+            <th style="text-align: center">下单用户</th>
+            <th style="text-align: center">发货仓库</th>
+            <th style="text-align: center">武器类型</th>
+            <th style="text-align: center">价格</th>
+            <th style="text-align: center">武器名称</th>
+            <th style="text-align: center">工厂号</th>
+            <th style="text-align: center">处理</th>
+
+        </tr>
+        </thead>
+
+
+        {% for item in order_list %}
+            <tbody>
+            <form method="POST" action="orders">
+            <tr>
+            {% csrf_token %}
+                <td>{{ item.0 }}</td>
+                <input type="hidden" name="order_id" value={{ item.0 }}>
+                <input type="hidden" name="weapon_id" value={{ item.1 }}>
+                <input type="hidden" name="warehouse_id" value={{ warehouse_id }}>
+                <td>{{ item.1 }}</td>
+                <td>{{ item.2 }}</td>
+                <td style="color: {% if item.3 == '已处理' %}green{% else %}red{% endif %};">{{ item.3 }}</td>
+                <td>{{ item.4 }}</td>
+                <td>{{ item.5 }}</td>
+                <td>{{ item.6 }}</td>
+                <td>{{ item.7 }}</td>
+                <td>{{ item.8 }}</td>
+                <td>{{ item.9 }}</td>
+                <td>
+                    <button class="btn btn-primary">
+                        发货
+                    </button>
+                </td>
+             </tr>
+            </form>
+
+
+            </tbody>
+        {% endfor %}
+
+    </table>
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th style="text-align: left">订货报表（昨天）</th>
+
+        </tr>
+        <tr>
+            <th style="text-align: center">武器类型</th>
+            <th style="text-align: center">数量</th>
+        </tr>
+        </thead>
+
+        {% if not order_jinlist %}
+            <tbody>
+            <form method="POST" action="orders">
+            <tr>
+            {% csrf_token %}
+                <td>{{ "空" }}</td>
+                <td>{{ "空" }}</td>
+             </tr>
+            </form>
+            </tbody>
+        {% endif %}
+        {% for itemjin in order_jinlist %}
+            <tbody>
+            <form method="POST" action="orders">
+            <tr>
+            {% csrf_token %}
+                <td>{{ itemjin.0 }}</td>
+                <td>{{ itemjin.1 }}</td>
+             </tr>
+            </form>
+            </tbody>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>

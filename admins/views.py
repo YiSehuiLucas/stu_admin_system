@@ -758,11 +758,35 @@ def student_create(request):
             VALUES (%s, %s, %s);'''
             cursor.execute(sql, [stu_id, stu_name, '大一上'])
             return JsonResponse({"success": "添加成功"})
-
-
-
-
 @require_http_methods(['GET', 'POST'])
 def student_import(request):
     return JsonResponse({"检修中": "检修中"})
+
+
+@require_http_methods(['GET', 'POST'])
+def show_courser(request):
+    if request.method == 'GET':
+        cursor = connection.cursor()
+        sql = '''SELECT *
+                 from course'''
+        cursor.execute(sql)
+        course_list = cursor.fetchall()
+        print(course_list)
+        return render(request, 'admins/show_courser.html', {'course_list': course_list})
+
+    elif request.method == 'POST':
+        id = request.POST.get('id')
+        name = request.POST.get('name')
+        point = request.POST.get('point')
+        grade = request.POST.get('grade')
+        print(f"{id} {name} {point} {grade}")
+        return JsonResponse({"asda": 'ads'})
+
+
+@require_http_methods(['GET', 'POST'])
+def courser_plan(request):
+    return render(request, 'admins/courser_plan.html')
+
+
+
 

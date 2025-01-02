@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看所有开设的课程</title>
+    <link rel="stylesheet" href="../../static/plugins/bootstrap-3.4.1/css/bootstrap.css">
+    <style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        margin: 20px 0;
+    }
+
+    .table-bordered {
+        border: 2px solid #4CAF50;
+    }
+
+    .table thead th {
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .table tbody tr {
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .table td {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .table tbody td {
+        color: #333;
+    }
+
+    form {
+        margin: 0;
+    }
+</style>
+</head>
+<body>
+<h3 style="text-align: center">导入新课程</h3>
+<form method="POST" action="show_courser.html">
+    {% csrf_token %}
+    <div style="margin-left: 23px; margin-top: 20px">
+        <span style="margin: 50px">
+            <span>课程编号</span>
+            <input type="text" name="name" class="input" placeholder="课程编号">
+        </span>
+        <span style="margin-left: 50px">
+            <span>课程名称</span>
+            <input type="text" name="id" class="input" placeholder="课程名称">
+        </span>
+        <div style="height: 10px"></div>
+        <div>
+            <span style="margin: 50px">
+                <span>课程学分</span>
+                <input type="text" name="point" class="input" placeholder="课程学分" value="0">
+            </span>
+            <span style="margin: 50px">
+                <span>开设年级</span>
+                <select name="grade" class="input">
+                    <option value="大一上">大一上</option>
+                    <option value="大一下">大一下</option>
+                    <option value="大二上">大二上</option>
+                    <option value="大二下">大二下</option>
+                    <option value="大三上">大三上</option>
+                    <option value="大三下">大三下</option>
+                    <option value="大四上">大四上</option>
+                    <option value="大四下">大四下</option>
+                </select>
+            </span>
+            <button style="margin-left: 130px">
+                确定添加
+            </button>
+        </div>
+    </div>
+</form>
+
+<h3 style="text-align: center">全部课程表</h3>
+<div>
+    <table class="table table-bordered" style="border: black 2px">
+        <thead>
+            <tr>
+                <th style="text-align: center">课程号</th>
+                <th style="text-align: center">课程名</th>
+                <th style="text-align: center">学分</th>
+                <th style="text-align: center">开设学期</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in course_list %}
+            <form method="POST" action="show_courser.html">
+                <tr>
+                    {% csrf_token %}
+                    <td>{{ item.0 }}</td>
+                    <td>{{ item.1 }}</td>
+                    <td>{{ item.2 }}</td>
+                    <td>{{ item.3 }}</td>
+                </tr>
+            </form>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,8 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>管理员部分 - 学生信息导入</title>
+    <title>查看仓库，入库</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.4.1/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/show_product.css">
     <style>
         .product_show {
             width: 750px;
@@ -260,38 +263,156 @@
     </style>
 </head>
 <body>
-<h1 style="text-align: center; margin-top: 60px">添加学生</h1>
-<div style="margin-left: 350px; margin-right: auto">
-    <form method="POST">
+{#导航条#}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" onclick="location.reload()">武 器</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'admin_warehouse' %}?admin={{ admin }}">仓 库</a></li>
+                <li><a href="{% url 'admin_orders' %}?admin={{ admin }}">订 单</a></li>
+                <li><a href="{% url 'admin_main' %}?admin={{ admin }}">首 页</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">登出</a></li>
+                <li class="dropdown">
+                    <a class="navbar-brand" href="#">个人信息</a>
+            </ul>
+            </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+{#入库区#}
+<div class="insert_warehouse">
+    <div style="margin-left: 320px">
+        <button type="button" class="btn" style="margin-top: 10px">
+            <strong>武器入库</strong>
+            <div id="container-stars">
+                <div id="stars"></div>
+            </div>
+
+            <div id="glow">
+                <div class="circle"></div>
+                <div class="circle"></div>
+            </div>
+        </button>
+    </div>
+    <form method="POST" action="{% url 'admin_warehouse' %}">
         {% csrf_token %}
         <div style="margin-left: 23px; margin-top: 20px">
 
 
     <span style="margin: 50px">
-        <span>学生姓名</span>
-        <input type="text" name="name" class="input" placeholder="学生姓名">
+        <span>武器类型</span>
+        <input type="text" name="type" class="input" placeholder="武器类型- type">
     </span>
-            <span style="margin-left: 50px">
-        <span>学生学号</span>
-        <input type="text" name="id" class="input" placeholder="学号">
+    <span style="margin-left: 50px">
+        <span>武器价格</span>
+        <input type="text" name="price" class="input" placeholder="武器价格 - price">
     </span>
-            <div style="height: 10px"></div>
+                            <div style="height: 10px"></div>
             <div>
     <span style="margin: 50px">
-        <span>学生年级</span>
-        <input type="text" name="grade" class="input" placeholder="年级" value="大一上">
+        <span>武器名称</span>
+        <input type="text" name="name" class="input" placeholder="武器名称 - name">
     </span>
 
-
-    <button style="margin-left: 130px">
-        确定添加
-    </button>
-
-
+    <span style="margin-left: 50px">
+        <span>武器图片</span>
+        <input type="text" name="src" class="input" placeholder="武器图片 - src">
+    </span>
+                <div style="height: 10px"></div>
             </div>
-    </form>
+    <span style="margin: 50px">
+        <span >工厂编号</span>
+        <input type="text" name="fac" class="input" placeholder="工厂ID - fac">
+<input type="hidden" name="admin" value="{{ admin }}">
+            <span style="margin-left: 170px">
+                <button>
+                    确 定 入 库
+                </button>
+            </span>
+    </span>
 
+        </div>
+    </form>
+</div>
+
+{#武器列表#}
+<div class="product_show">
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th style="text-align: center; height: 20px">武器类型</th>
+            <th style="text-align: center; height: 20px">武器数量</th>
+        </tr>
+        </thead>
+
+        {% for item in weapon_leilist %}
+            <tbody>
+            <td style="height: 10px">
+                <div>{{ item.0 }}</div>
+            </td>
+            <td style="height: 10px">
+                <div>{{ item.1 }}</div>
+            </td>
+            </tbody>
+        {% endfor %}
+    </table>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th style="text-align: center">仓库编号</th>
+            <th style="text-align: center">仓库名</th>
+            <th style="text-align: center">武器ID</th>
+            <th style="text-align: center">武器类型</th>
+            <th style="text-align: center">武器价格</th>
+            <th style="text-align: center">武器名称</th>
+            <th style="text-align: center">武器样式</th>
+        </tr>
+        </thead>
+
+        {% for item in weapon_list %}
+            <tbody>
+            <td>
+                <div>{{ item.0 }}</div>
+            </td>
+            <td>
+                <div>{{ item.1 }}</div>
+            </td>
+            <td>
+                <div>{{ item.2 }}</div>
+            </td>
+            <td>
+                <div>{{ item.3 }}</div>
+            </td>
+            <td>
+                <div>{{ item.4 }}</div>
+            </td>
+            <td>
+                <div>{{ item.5 }}</div>
+            </td>
+            <td>
+                <img src="{{ item.6 }}" alt="" style="height: 80px; width: 150px; margin-left: 20px">
+            </td>
+            </tbody>
+        {% endfor %}
+    </table>
 </div>
 </body>
-
 </html>

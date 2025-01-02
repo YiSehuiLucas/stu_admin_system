@@ -29,7 +29,8 @@ def admin_dashboard(request, user_id):
         messages.error(request, '管理员信息不存在。')
         return redirect('login')  # 重定向到登录页面或其他适当的页面
 
-    return render(request, 'admins/admin_dashboard.html', {'admin': admin, })
+    return render(request, 'admins/admin_dashboard.html', {'admin': admin,
+                                                           'user_id': user_id})
 
 
 def admin_profile(request, user_id):
@@ -72,6 +73,7 @@ def admin_edit(request, user_id):
     return render(request, 'admins/admin_edit.html', {
         'admin': admin,
         'form': form,
+        'user_id': user_id
     })
 
     # -----------------------------------以下是教师列表部分--------------------------------------
@@ -79,7 +81,7 @@ def admin_edit(request, user_id):
 
 # @login_required
 # @user_passes_test(is_admin)
-def teacher_list(request):
+def teacher_list(request, user_id):
     # 获取搜索参数，默认为空字符串
     search_query = request.GET.get('q', '').strip()
     params = []
@@ -164,12 +166,12 @@ def teacher_list(request):
     }
 
     # 渲染模板
-    return render(request, 'admins/teacher_list.html', context)
+    return render(request, 'admins/teacher_list.html', context, {"user_id": user_id})
 
 
 # @login_required
 # @user_passes_test(is_admin)
-def teacher_create(request):
+def teacher_create(request, user_id):
     if request.method == 'POST':
         # 获取用户输入的数据
         user_id = request.POST.get('user_id').strip()
@@ -238,12 +240,12 @@ def teacher_create(request):
             return render(request, 'admins/teacher_form.html')
 
     else:
-        return render(request, 'admins/teacher_form.html')
+        return render(request, 'admins/teacher_form.html', {"user_id": user_id})
 
 
 # @login_required
 # @user_passes_test(is_admin)
-def teacher_edit(request, tch_id):
+def teacher_edit(request, tch_id, user_id):
     try:
         # 获取 Teacher 对象
         teacher = Teacher.objects.select_related('tch_id__teacher').get(tch_id=tch_id)
@@ -308,28 +310,30 @@ def teacher_edit(request, tch_id):
             return render(request, 'admins/teacher_edit.html', {'teacher': teacher})
 
     else:
-        return render(request, 'admins/teacher_edit.html', {'teacher': teacher})
+        return render(request, 'admins/teacher_edit.html', {'teacher': teacher,
+                                                            'user_id': user_id})
 
 
 # @login_required
 # @user_passes_test(is_admin)
-def teacher_delete(request, tch_id):
+def teacher_delete(request, tch_id, user_id):
     teacher = get_object_or_404(Teacher, tch_id__user_id=tch_id)
     if request.method == 'POST':
         teacher.delete()
         messages.success(request, '教师信息删除成功')
         return redirect('teacher_list')
-    return render(request, 'admins/teacher_confirm_delete.html', {'teacher': teacher})
+    return render(request, 'admins/teacher_confirm_delete.html', {'teacher': teacher,
+                                                                  'user_id': user_id})
 
 
 # @login_required
 # @user_passes_test(is_admin)
-def teacher_import(request):
+def teacher_import(request, user_id):
     if request.method == 'POST' and request.FILES.get('csv_file'):
         csv_file = request.FILES['csv_file']
         if not csv_file.name.endswith('.csv'):
             messages.error(request, '请上传一个 CSV 文件。')
-            return render(request, 'admins/teacher_import.html')
+            return render(request, 'admins/teacher_import.html', {'user_id': user_id})
 
         try:
             decoded_file = csv_file.read().decode('utf-8').splitlines()
@@ -339,7 +343,7 @@ def teacher_import(request):
             required_headers = {'tch_id', 'tch_name', 'tch_phnum', 'depart_id'}
             if not required_headers.issubset(reader.fieldnames):
                 messages.error(request, 'CSV 文件缺少必要的表头。')
-                return render(request, 'admins/teacher_import.html')
+                return render(request, 'admins/teacher_import.html', {'user_id': user_id})
 
             with connection.cursor() as cursor:
                 # 开始事务
@@ -384,20 +388,20 @@ def teacher_import(request):
                         """, [tch_id, depart_id])
 
             messages.success(request, '教师信息导入成功。')
-            return redirect('teacher_list')
+            return redirect('teacher_list', {'user_id': user_id})
         except Exception as e:
             # 记录错误日志（可选）
             # logger.error(str(e))
             messages.error(request, '导入教师信息时发生错误，请检查 CSV 文件格式。')
-            return render(request, 'admins/teacher_import.html')
+            return render(request, 'admins/teacher_import.html', {'user_id': user_id})
 
-    return render(request, 'admins/teacher_import.html')
+    return render(request, 'admins/teacher_import.html', {'user_id': user_id})
 
 
 # ------------------------------以下是调课审核功能-----------------------------------------------------
 # @login_required
 # @user_passes_test(is_admin)
-def courseadapt_list(request):
+def courseadapt_list(request, user_id):
     week = request.GET.get('week', '')
     status_filter = request.GET.get('status_filter', '')
     # 初始化查询集
@@ -449,13 +453,14 @@ def courseadapt_list(request):
         'week': week,
         'status_filter': status_filter,
         'paginator': paginator,
-        'page': page
+        'page': page,
+        'user_id': user_id
     })
 
 
 # @login_required
 # @user_passes_test(is_admin)
-def courseadapt_review(request, ca_id):
+def courseadapt_review(request, ca_id, user_id):
     courseadapt = get_object_or_404(CourseAdapt, ca_id=ca_id)
     if request.method == 'POST':
         if 'approve' in request.POST:
@@ -463,20 +468,21 @@ def courseadapt_review(request, ca_id):
             courseadapt.status = '同意'
             courseadapt.save()
             messages.success(request, '调课申请已同意')
-            return redirect('courseadapt_review')
+            return redirect('courseadapt_review', {'user_id': user_id})
         elif 'reject' in request.POST:
             # 处理拒绝申请
             courseadapt.status = '拒绝'
             courseadapt.save()
             messages.success(request, '调课申请已拒绝')
-            return redirect('courseadapt_review')
+            return redirect('courseadapt_review', {'user_id': user_id})
     else:
         form = CourseAdaptReviewForm()
-    return render(request, 'admins/courseadapt_review.html', {'courseadapt': courseadapt})
+    return render(request, 'admins/courseadapt_review.html', {'courseadapt': courseadapt,
+                                                              'user_id': user_id})
 
 
 # ------------------------------以下是免听审核功能------------------------------------------------------------
-def waiverapplication_list(request):
+def waiverapplication_list(request, user_id):
     # 获取查询参数
     search_query = request.GET.get('q', '').strip()
     filter_status = request.GET.get('status', '').strip()
@@ -580,6 +586,7 @@ def waiverapplication_list(request):
         'statuses': statuses,
         'paginator': paginator,
         'page_obj': page_obj,
+        'user_id': user_id
     })
 
 

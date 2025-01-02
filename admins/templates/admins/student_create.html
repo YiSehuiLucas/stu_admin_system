@@ -3,25 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <title>管理员部分 - 学生信息导入</title>
+    <style>
+        .product_show {
+            width: 750px;
+            height: 600px;
+        {#border: 1px solid gray;#} margin-right: auto;
+            margin-left: auto;
+            margin-top: 50px;
+        }
+
+        .insert_warehouse {
+            border: 1px solid darkslategrey;
+            width: 750px;
+            height: 250px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 50px;
+            border-radius: 14px
+        }
+
+        .inline-block {
+            display: inline-block;
+            width: 222px;
+            height: 200px;
+        {#background-color: lightblue;#} margin: 12px;
+        }
+
+        td div {
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .input {
+            border: 1px solid black;
+            padding: 1rem;
+            border-radius: 1rem;
+            background: #e8e8e8;
+            box-shadow: 20px 20px 60px #c5c5c5,
+            -20px -20px 60px #ffffff;
+            transition: 0.3s;
+        }
+
+        .input:focus {
+            outline-color: #efcb55;
+            background: #dcd5c2;
+            box-shadow: inset 20px 20px 60px #947a2a,
+            inset -20px -20px 60px #ffffff;
+            transition: 0.3s;
+        }
+
+        /* From Uiverse.io by StealthWorm */
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 13rem;
+            overflow: hidden;
+            height: 3rem;
+            background-size: 300% 300%;
+            cursor: pointer;
+            backdrop-filter: blur(1rem);
+            border-radius: 5rem;
+            transition: 0.5s;
+            animation: gradient_301 5s ease infinite;
+            border: double 4px transparent;
+            background-image: linear-gradient(#212121, #212121),
+            linear-gradient(
+                    137.48deg,
+                    #ffdb3b 10%,
+                    #fe53bb 45%,
+                    #8f51ea 67%,
+                    #0044ff 87%
+            );
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+        }
+
+        #container-stars {
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.5s;
+            backdrop-filter: blur(1rem);
+            border-radius: 5rem;
+        }
+
+        strong {
+            z-index: 2;
+            font-family: "Avalors Personal Use";
+            font-size: 12px;
+            letter-spacing: 5px;
+            color: #ffffff;
+            text-shadow: 0 0 4px white;
+        }
+
+        #glow {
+            position: absolute;
+            display: flex;
+            width: 12rem;
+        }
+
+        .circle {
+            width: 100%;
+            height: 30px;
+            filter: blur(2rem);
+            animation: pulse_3011 4s infinite;
+            z-index: -1;
+        }
+
+        .circle:nth-of-type(1) {
+            background: rgba(254, 83, 186, 0.636);
+        }
+
+        .circle:nth-of-type(2) {
+            background: rgba(142, 81, 234, 0.704);
+        }
+
+        .btn:hover #container-stars {
+            z-index: 1;
+            background-color: #212121;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn:active {
+            border: double 4px #fe53bb;
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            animation: none;
+        }
+
+        .btn:active .circle {
+            background: #fe53bb;
+        }
+
+        #stars {
+            position: relative;
+            background: transparent;
+            width: 200rem;
+            height: 200rem;
+        }
+
+        #stars::after {
+            content: "";
+            position: absolute;
+            top: -10rem;
+            left: -100rem;
+            width: 100%;
+            height: 100%;
+            animation: animStarRotate 90s linear infinite;
+        }
+
+        #stars::after {
+            background-image: radial-gradient(#ffffff 1px, transparent 1%);
+            background-size: 50px 50px;
+        }
+
+        #stars::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 170%;
+            height: 500%;
+            animation: animStar 60s linear infinite;
+        }
+
+        #stars::before {
+            background-image: radial-gradient(#ffffff 1px, transparent 1%);
+            background-size: 50px 50px;
+            opacity: 0.5;
+        }
+
+        @keyframes animStar {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-135rem);
+            }
+        }
+
+        @keyframes animStarRotate {
+            from {
+                transform: rotate(360deg);
+            }
+
+            to {
+                transform: rotate(0);
+            }
+        }
+
+        @keyframes gradient_301 {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes pulse_3011 {
+            0% {
+                transform: scale(0.75);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+            }
+
+            100% {
+                transform: scale(0.75);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+
+        button {
+            --bg: #e74c3c;
+            --text-color: #fff;
+            position: relative;
+            width: 150px;
+            border: none;
+            background: var(--bg);
+            color: var(--text-color);
+            padding: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.2s;
+            border-radius: 5px;
+            opacity: 0.8;
+            letter-spacing: 1px;
+            box-shadow: #c0392b 0px 7px 2px, #000 0px 8px 5px;
+        }
+
+        button:hover {
+            opacity: 1;
+        }
+
+        button:active {
+            top: 4px;
+            box-shadow: #c0392b 0px 3px 2px, #000 0px 3px 5px;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <form>
-    <div class="field">
-      <input type="text" id="firstName" name="firstNameTextField">
-      <label for="firstName">First Name</label>
-        
-    </div>
-    <div class="field">
-      <input type="text" id="lastName" name="lastNameTextField">
-      <label for="lastName">Last Name</label>
-    </div>
-    <div class="field">
-      <input type="text" id="email" name="emailTextField">
-      <label for="email">Email</label>
-    </div>
-    <button>Start</button>
-  </form>
+<h1 style="text-align: center; margin-top: 60px">添加学生</h1>
+<div style="margin-left: 350px; margin-right: auto">
+    <form method="POST">
+        {% csrf_token %}
+        <div style="margin-left: 23px; margin-top: 20px">
+
+
+    <span style="margin: 50px">
+        <span>学生姓名</span>
+        <input type="text" name="name" class="input" placeholder="学生姓名">
+    </span>
+            <span style="margin-left: 50px">
+        <span>学生学号</span>
+        <input type="text" name="id" class="input" placeholder="学号">
+    </span>
+            <div style="height: 10px"></div>
+            <div>
+    <span style="margin: 50px">
+        <span>学生年级</span>
+        <input type="text" name="grade" class="input" placeholder="年级" value="大一上">
+    </span>
+
+
+    <button style="margin-left: 130px">
+        确定添加
+    </button>
+
+
+            </div>
+    </form>
 </div>
 </body>
+
 </html>

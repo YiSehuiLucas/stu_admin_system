@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提交调课申请</title>
+    <link rel="stylesheet" href="{% static 'css/teach_detail.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<a href="{% url 'teach_index' %}?tch_id={{ tch_id }}" class="top-right-button">返回</a>
+<h1 class="animated rotateIn">提交调课申请</h1>
+
+<button id="openModalButton" class="modal-button">提交新申请</button>
+<dialog id="courseAdaptDialog">
+    <form method="post" action="{% url 'teach_courseadapt' %}" id="courseAdaptForm">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="submit">
+        <div class="modal-header">
+            <h2>提交调课申请</h2>
+            <button id="closeModalButton" class="modal-button">关闭</button>
+        </div>
+        <div class="modal-body">
+            <div><label for="cour_id">课程:</label>
+                <select id="cour_id" name="cour_id" required>
+                    {% for course in courses %}
+                        <option value="{{ course.cour_id }}">{{ course.cour_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div><label for="week">周次:</label><input type="text" id="week" name="week" required></div>
+            <div><label for="classroom">教室:</label><input type="text" id="classroom" name="classroom" required></div>
+            <div><label for="dayofweek">星期:</label><input type="text" id="dayofweek" name="dayofweek" required></div>
+            <div><label for="timeslot">时间段:</label><input type="text" id="timeslot" name="timeslot" required></div>
+            <div><label for="reason">原因:</label><textarea id="reason" name="reason" required></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="modal-button">提交</button>
+        </div>
+    </form>
+</dialog>
+
+<h2>我的调课申请</h2>
+<div class="table" id="courseadapt-table">
+  <div class="row header blue">
+    <div class="cell">课程编号</div>
+    <div class="cell">周次</div>
+    <div class="cell">教室</div>
+    <div class="cell">星期</div>
+    <div class="cell">时间段</div>
+    <div class="cell">原因</div>
+    <div class="cell">状态</div>
+    <div class="cell">操作</div>
+  </div>
+
+{% for adapt in course_adapts %}
+    <div class="row">
+        <div class="cell">{{ adapt.cour_name }}</div>
+        <div class="cell">{{ adapt.week }}</div>
+        <div class="cell">{{ adapt.classroom }}</div>
+        <div class="cell">{{ adapt.dayofweek }}</div>
+        <div class="cell">{{ adapt.timeslot }}</div>
+        <div class="cell">{{ adapt.reason }}</div>
+        <div class="cell">{{ adapt.status }}</div>
+        <div class="cell">
+            <button onclick="deleteCourseAdapt({{ adapt.ca_id }})">删除</button>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<script>
+    function deleteCourseAdapt(ca_id) {
+        if (confirm('确定要删除此条目吗？')) {
+            $.ajax({
+                url: '{% url "teach_courseadapt" %}',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'action': 'delete',
+                    'ca_id': ca_id
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    }
+                },
+                error: function() {
+                    alert('无法删除记录，请稍后再试。');
+                }
+            });
+        }
+    }
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('openModalButton').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('courseAdaptDialog').showModal();
+    });
+
+    document.getElementById('closeModalButton').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('courseAdaptDialog').close();
+    });
+
+    document.getElementById('courseAdaptForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    $.ajax({
+        url: '{% url "teach_courseadapt" %}',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            if (response.status === 'success') {
+                location.reload();
+            }
+        },
+        error: function() {
+            alert('无法提交申请，请稍后再试。');
+        }
+    });
+});
+});
+</script>
+</body>
+</html>

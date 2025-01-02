@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生界面</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        *,
+        *:after,
+        *:before {
+            box-sizing: border-box;
+        }
+
+        /* Codepen specific styling - only to center the elements in the pen preview and viewport */
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* End Codepen specific styling */
+
+        body {
+            font-family: "Inter", sans-serif;
+            color: #303030;
+            background-color: rgba(52, 46, 173, 0.05);
+        }
+
+        .menu {
+            display: flex;
+            flex-grow: 1;
+            height: 120px;
+            max-width: 420px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 0 1px rgba(52, 46, 173, 0.25), 0 15px 30px rgba(52, 46, 173, 0.1);
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            text-decoration: none;
+        }
+
+        .menu-item:focus,
+        .menu-item:hover {
+            outline: none;
+        }
+
+        .menu-item:focus .material-icons,
+        .menu-item:hover .material-icons {
+            font-family: "Material Icons Outlined";
+            color: #342ead;
+        }
+
+        .menu-item:focus .menu-item-label,
+        .menu-item:hover .menu-item-label {
+            color: #342ead;
+        }
+
+        .material-icons {
+            font-family: "Material Icons Outlined";
+            display: block;
+            margin-bottom: 7px;
+            font-size: 40px;
+            color: rgba(52, 46, 173, 0.6);
+            transition: 0.25s ease;
+        }
+
+        .menu-item-label {
+            display: block;
+            font-size: 20px;
+            color: rgba(52, 46, 173, 0.7);
+            transition: 0.25s ease;
+        }
+        h1 {
+            font-size: 4rem;
+            text-align: center;
+            color: #303030;
+            margin: 200px;
+            padding: 1rem 2rem; /* 添加内边距 */
+            background-color: #fff; /* 白色背景 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01); /* 添加轻微的阴影 */
+            border-radius: 8px; /* 圆角 */
+        }
+    </style>
+</head>
+<body>
+<h1>学生界面</h1>
+<div class="container">
+    <nav class="menu"  aria-label="主菜单">
+        <a href={% url 'stu_select' %}?stu_id={{ stu_id }} class="menu-item" title="选课">
+            <span class="material-icons">sports_esports</span>
+            <span class="menu-item-label">选课</span>
+        </a>
+        <a href={% url 'stu_grade' %}?stu_id={{ stu_id }} class="menu-item" title="成绩">
+            <span class="material-icons">camera_alt</span>
+            <span class="menu-item-label">成绩</span>
+        </a>
+        <a href={% url 'stu_course' %}?stu_id={{ stu_id }} class="menu-item" title="课表">
+            <span class="material-icons">movie</span>
+            <span class="menu-item-label">课表</span>
+        </a>
+        <a href={% url 'stu_free' %}?stu_id={{ stu_id }} class="menu-item" title="免听">
+            <span class="material-icons">store_mall_directory</span>
+            <span class="menu-item-label">免听</span>
+        </a>
+    </nav>
+</div>
+{#<div>您好， {{ stu_id }} 同学</div>#}
+<h2 style="text-align: center">您好， {{ stu }} 同学</h2>
+</body>
+</html>

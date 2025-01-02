@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教务系统 - 管理员端</title>
+     <!-- 引入CSS文件 -->
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f9fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* 按钮容器 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px; /* 为按钮之间添加间距 */
+        }
+
+        /* 按钮样式 */
+        .btn-custom {
+            border-radius: 50px; /* 圆角效果 */
+            padding: 15px 30px; /* 增加按钮内边距 */
+            font-size: 18px; /* 设置字体大小 */
+            font-weight: bold; /* 设置字体加粗 */
+            text-transform: uppercase; /* 字符转换为大写 */
+            transition: all 0.3s ease-in-out; /* 按钮的过渡效果 */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 默认状态下按钮的背景颜色和阴影 */
+        .btn-custom {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影 */
+            border: none; /* 去掉按钮边框 */
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-5px); /* 鼠标悬停时轻微上移 */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 增加阴影的强度 */
+        }
+
+        /* 按钮不同状态的背景色 */
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #4f5d73); /* 渐变背景 */
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #5a6268, #3e4a55); /* 悬停时变换背景色 */
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0069d9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #0062cc, #004085);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #218838);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(45deg, #218838, #1e7e34);
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #17a2b8, #117a8b);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(45deg, #138496, #0f5f6a);
+        }
+
+
+        /* 按钮样式 */
+        .btn-custom {
+            margin: 0 10px;
+        }
+
+        /* 按钮容器 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 图片轮播容器 -->
+    <div class="wrap">
+	<div class="pic1 pic">
+		<div class="pic_num1 pic_num"></div>
+	</div>
+	<div class="pic2 pic">
+		<div class="pic_num2 pic_num"></div>
+	</div>
+	<div class="pic3 pic">
+		<div class="pic_num3 pic_num"></div>
+	</div>
+	<div class="pic4 pic">
+		<div class="pic_num4 pic_num"></div>
+	</div>
+	<div class="pic5 pic">
+		<div class="pic_num5 pic_num"></div>
+	</div>
+	<div class="pic6 pic">
+		<div class="pic_num6 pic_num"></div>
+	</div>
+</div>
+    <!-- 欢迎信息 -->
+    <h1 class="text-center mt-5">欢迎进入，管理员{{ admin_name }}！</h1>
+
+    <!-- 按钮部分 -->
+    <div class="button-container">
+        <a href="{% url 'admin_profile' user_id=admin_id %}" class="btn btn-secondary btn-lg btn-custom">个人信息</a>
+        <a href="{% url 'teacher_list' user_id=admin_id %}" class="btn btn-primary btn-lg btn-custom">教师列表</a>
+        <a href="{% url 'student_list' %}" class="btn btn-primary btn-lg btn-custom">学生列表</a>
+        <a href="{% url 'courseadapt_list' %}" class="btn btn-success btn-lg btn-custom">调课申请列表</a>
+        <a href="{% url 'waiverapplication_list' %}" class="btn btn-info btn-lg btn-custom">免听申请列表</a>
+    </div>
+
+    <!-- 引入jQuery库 -->
+    <script type="text/javascript" src="/static/jquery.min.js"></script>
+    <!-- 引入自定义的JS文件 -->
+    <script type="text/javascript" src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员端 - 导入教师信息</title>
+    <style>
+        /* 设置全局背景样式 */
+        body {
+            background-color: #f4f9fc; /* 页面背景设为浅蓝色 */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 页面容器样式 */
+        .container {
+            background-image: url("{% static 'editt.jpg' %}"); /* 使用Django的静态文件加载语法 */
+            background-size: cover; /* 背景图覆盖整个区域 */
+            background-position: center; /* 背景图居中 */
+            background-attachment: fixed; /* 背景固定 */
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: white; /* 白色文字 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 标题样式 */
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fff; /* 文字颜色白色 */
+        }
+
+        /* 提示消息容器样式 */
+        .alert {
+            background-color: rgba(0, 0, 0, 0.7); /* 半透明背景 */
+            border-radius: 5px;
+            padding: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        /* 表单样式 */
+        form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+
+        .form-group input[type="file"] {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input[type="file"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* 提交按钮样式 */
+        .btn-submit {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* 返回按钮样式 */
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            padding: 12px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .form-group input[type="file"] {
+                font-size: 14px;
+            }
+
+            .btn-submit,
+            .btn-secondary {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>导入教师信息</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="关闭">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="csv_file">请选择 CSV 文件</label>
+            <input type="file" class="form-control-file" id="csv_file" name="csv_file" accept=".csv" required>
+        </div>
+        <button type="submit" class="btn-submit">导入</button>
+        <a href="{% url 'teacher_list' user_id=user_id %}" class="btn btn-secondary">返回</a>
+    </form>
+</div>
+</body>
+</html>

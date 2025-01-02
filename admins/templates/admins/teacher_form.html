@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员端 - 创建教师信息</title>
+    <style>
+        /* 设置全局背景样式 */
+        body {
+            background-color: #f4f9fc; /* 页面背景设为白色 */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 页面容器样式，使用flexbox让内容居中 */
+        .teacher-form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f9fc; /* 背景为白色 */
+        }
+
+        .teacher-form {
+            background-image: url("{% static 'editt.jpg' %}"); /* 使用Django的静态文件加载语法 */
+            background-size: cover; /* 背景图覆盖整个区域 */
+            background-position: center; /* 背景图居中 */
+            background-attachment: fixed; /* 背景固定 */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 标题样式 */
+        .teacher-form h3 {
+            text-align: center;
+            color: #fff; /* 标题文字颜色改为白色以适应背景 */
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* 表单样式 */
+        .teacher-form form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .teacher-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .teacher-form label {
+            font-weight: bold;
+            color: #fff; /* 标签文字颜色改为白色 */
+            margin-bottom: 5px;
+        }
+
+        .teacher-form .form-group input,
+        .teacher-form .form-group select {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+
+        .teacher-form .form-group input:focus,
+        .teacher-form .form-group select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* 提交按钮样式 */
+        .teacher-form .btn-submit {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .teacher-form .btn-submit:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* 错误信息样式 */
+        .teacher-form .text-danger {
+            font-size: 0.9rem;
+            color: #dc3545;
+            margin-top: 0.5rem;
+        }
+
+        /* 返回按钮样式 */
+        .teacher-form .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            padding: 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .teacher-form .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .teacher-form {
+                padding: 30px;
+            }
+
+            .teacher-form h3 {
+                font-size: 20px;
+            }
+
+            .teacher-form .form-group input,
+            .teacher-form .form-group select {
+                font-size: 14px;
+            }
+
+            .teacher-form .btn-submit,
+            .teacher-form .btn-secondary {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="teacher-form-container">
+        <div class="teacher-form">
+            <h3>创建教师信息</h3>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="关闭">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="user_id">教师ID</label>
+                    <input type="text" class="form-control" id="user_id" name="user_id_add" placeholder="输入教师ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="tch_name">教师姓名</label>
+                    <input type="text" class="form-control" id="tch_name" name="tch_name" placeholder="输入教师姓名" required>
+                </div>
+                <div class="form-group">
+                    <label for="tch_phnum">联系电话</label>
+                    <input type="text" class="form-control" id="tch_phnum" name="tch_phnum" placeholder="输入联系电话" required>
+                </div>
+                <div class="form-group">
+                    <label for="depart_id">所属部门ID</label>
+                    <input type="text" class="form-control" id="depart_id" name="depart_id" placeholder="输入部门ID" required>
+                </div>
+                <button type="submit" class="btn-submit">创建</button>
+                <a href="{% url 'teacher_list' user_id=user_id %}" class="btn-secondary">返回</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

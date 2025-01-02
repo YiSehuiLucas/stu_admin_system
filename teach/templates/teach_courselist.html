@@ -1,0 +1,41 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师课表</title>
+    <link rel="stylesheet" href="{% static 'css/teach_detail.css' %}">
+</head>
+<body>
+<a href="{% url 'teach_index' %}?tch_id={{ tch_id }}" class="top-right-button">返回</a>
+<h1 class="animated rotateIn">我的课表</h1>
+
+<div class="table" id="schedule-table">
+  <div class="row header blue">
+    <div class="cell">课程编号</div>
+    <div class="cell">课程名称</div>
+    <div class="cell">描述</div>
+    <div class="cell">教室</div>
+    <div class="cell">星期</div>
+    <div class="cell">时间段</div>
+    <div class="cell">开始周</div>
+    <div class="cell">结束周</div>
+  </div>
+
+  {% for schedule in schedules %}
+    <div class="row">
+        <div class="cell">{{ schedule.cour_id }}</div>
+        <div class="cell">{{ schedule.cour_name }}</div>
+        <div class="cell">{{ schedule.description }}</div>
+        <div class="cell">{{ schedule.classroom }}</div>
+        <div class="cell">{{ schedule.dayofweek }}</div>
+        <div class="cell">{{ schedule.timeslot }}</div>
+        <div class="cell">{{ schedule.start }}</div>
+        <div class="cell">{{ schedule.end }}</div>
+    </div>
+  {% endfor %}
+</div>
+
+</body>
+</html>

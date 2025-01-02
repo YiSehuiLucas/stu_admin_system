@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员端 - 学生列表</title>
+    <link rel="stylesheet" href="/static/loading.css">
+    <style>
+        /* 基本字体和背景色 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f9fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* 页面加载完成后显示内容 */
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* 加载动画样式 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* 页面标题样式 */
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        /* 搜索框和按钮的布局 */
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #007bff;
+            border-radius: 20px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 按钮组样式：按钮在同一行 */
+        .btn-group {
+            display: flex;
+            gap: 10px; /* 调整按钮间距 */
+        }
+
+        .btn-group a {
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-group a.btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-group a.btn-warning {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .btn-group a:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-group a.btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-group a.btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        /* 表格样式 */
+        thead {
+            background-color: #007bff;
+        }
+
+        th {
+            color: white;
+            font-weight: bold;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        td {
+            background-color: #fff;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+        }
+
+        td:hover {
+            background-color: #f8f8f8;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 1px solid #007bff;
+            border-radius: 20px;
+            transition: color 0.3s, background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            color: white;
+            background-color: #007bff;
+        }
+
+        .pagination .current {
+            margin: 0 10px;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            .search-box input[type="text"] {
+                width: 80%;
+            }
+
+            .search-box button {
+                padding: 8px 16px;
+            }
+
+            .btn-group a {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 加载动画 -->
+    <div id="loading" class="wheel-and-hamster">
+        <div class="wheel"></div>
+        <div class="hamster">
+            <div class="hamster__head">
+                <div class="hamster__ear"></div>
+                <div class="hamster__eye"></div>
+                <div class="hamster__nose"></div>
+            </div>
+            <div class="hamster__body">
+                <div class="hamster__limb--fr"></div>
+                <div class="hamster__limb--fl"></div>
+                <div class="hamster__limb--br"></div>
+                <div class="hamster__limb--bl"></div>
+                <div class="hamster__tail"></div>
+            </div>
+        </div>
+        <div class="spoke"></div>
+    </div>
+
+    <!-- 页面主要内容 -->
+    <h1>学生列表</h1>
+
+    <!-- 搜索框与按钮放在同一行 -->
+    <div class="header-controls">
+        <div class="search-box">
+            <form method="get" action="{% url 'student_list' %}" class="form-inline">
+                <input type="text" name="q" placeholder="输入学生ID或姓名" value="{{ search_query }}" id="searchInput">
+                <button type="submit">搜索</button>
+            </form>
+        </div>
+
+        <div class="btn-group">
+            <a href="{% url 'student_create' %}" class="btn btn-success">创建学生信息</a>
+            <a href="{% url 'student_import' %}" class="btn btn-warning">导入学生信息</a>
+        </div>
+    </div>
+
+    <!-- 教师列表表格 -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>学生ID</th>
+                <th>学生姓名</th>
+                <th>联系电话</th>
+                <th>年级</th>
+                <th>院系</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in student_data %}
+            <tr>
+                <td>{{ student.stu_id }}</td>
+                <td>{{ student.stu_name }}</td>
+                <td>{{ student.stu_phnum }}</td>
+                <td>{{ student.stu_semester }}</td>
+                <td>{{ student.stu_major }}</td>
+
+                <td>
+                    <a href="{% url 'student_edit' student.stu_id %}" class="btn btn-warning btn-sm">编 辑</a>
+{#                    <a href="{% url 'student_delete' student.stu_id %}" class="btn btn-danger btn-sm">删除</a>#}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">没有找到匹配的学生信息。</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 分页 -->
+    <div class="pagination">
+        <span class="page-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&q={{ search_query }}" class="prev">首页</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}" class="prev">上一页</a>
+            {% endif %}
+
+            <!-- 当前页码 -->
+            <span class="current">
+                第 {{ page_obj.number }} 页，共 {{ paginator.num_pages }} 页
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ search_query }}" class="next">下一页</a>
+                <a href="?page={{ paginator.num_pages }}&q={{ search_query }}" class="next">尾页</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 加载动画的 JavaScript 控制 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var loading = document.getElementById('loading');
+            var body = document.body;
+            loading.style.display = 'none';
+            body.classList.add('loaded');
+        });
+    </script>
+</body>
+</html>

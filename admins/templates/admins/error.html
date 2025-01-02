@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误</title>
+    <style>
+        /* 使用 flexbox 来居中内容 */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0; /* 可选的背景色 */
+        }
+
+        /* 设置容器 */
+        .error-container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 8px; /* 可选的圆角 */
+        }
+
+        h1 {
+            color: #ff3333; /* 错误标题颜色 */
+        }
+
+        p {
+            color: #555; /* 错误信息颜色 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-container">
+        <h1>啊哦，发生了一点问题</h1>
+        <p>{{ error_message }}</p>
+    </div>
+
+</body>
+</html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -7,7 +6,6 @@
     <title>管理员端 - 学生列表</title>
     <link rel="stylesheet" href="/static/loading.css">
     <style>
-        /* 基本字体和背景色 */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f9fc;
@@ -20,12 +18,10 @@
             transition: opacity 0.5s ease-in-out;
         }
 
-        /* 页面加载完成后显示内容 */
         body.loaded {
             opacity: 1;
         }
 
-        /* 加载动画样式 */
         .loading {
             position: fixed;
             top: 0;
@@ -39,7 +35,6 @@
             z-index: 9999;
         }
 
-        /* 页面标题样式 */
         h1 {
             font-size: 32px;
             color: #333;
@@ -50,7 +45,6 @@
             padding-bottom: 10px;
         }
 
-        /* 搜索框和按钮的布局 */
         .header-controls {
             display: flex;
             justify-content: space-between;
@@ -63,7 +57,6 @@
             border-radius: 8px;
         }
 
-        /* 搜索框 */
         .search-box {
             display: flex;
             justify-content: flex-start;
@@ -100,10 +93,9 @@
             background-color: #0056b3;
         }
 
-        /* 按钮组样式：按钮在同一行 */
         .btn-group {
             display: flex;
-            gap: 10px; /* 调整按钮间距 */
+            gap: 10px;
         }
 
         .btn-group a {
@@ -136,7 +128,6 @@
             background-color: #e0a800;
         }
 
-        /* 表格样式 */
         thead {
             background-color: #007bff;
         }
@@ -174,7 +165,6 @@
             background-color: #f9f9f9;
         }
 
-        /* 分页样式 */
         .pagination {
             margin-top: 20px;
             text-align: center;
@@ -202,7 +192,6 @@
             font-weight: bold;
         }
 
-        /* 响应式设计 */
         @media screen and (max-width: 768px) {
             .search-box input[type="text"] {
                 width: 80%;
@@ -230,33 +219,16 @@
 </head>
 
 <body>
-    <!-- 加载动画 -->
-    <div id="loading" class="wheel-and-hamster">
-        <div class="wheel"></div>
-        <div class="hamster">
-            <div class="hamster__head">
-                <div class="hamster__ear"></div>
-                <div class="hamster__eye"></div>
-                <div class="hamster__nose"></div>
-            </div>
-            <div class="hamster__body">
-                <div class="hamster__limb--fr"></div>
-                <div class="hamster__limb--fl"></div>
-                <div class="hamster__limb--br"></div>
-                <div class="hamster__limb--bl"></div>
-                <div class="hamster__tail"></div>
-            </div>
-        </div>
-        <div class="spoke"></div>
+    <div id="loading" class="loading">
+        加载中，请稍候...
     </div>
 
-    <!-- 页面主要内容 -->
     <h1>学生列表</h1>
 
-    <!-- 搜索框与按钮放在同一行 -->
     <div class="header-controls">
         <div class="search-box">
             <form method="get" action="{% url 'student_list' %}" class="form-inline">
+                {% csrf_token %}
                 <input type="text" name="q" placeholder="输入学生ID或姓名" value="{{ search_query }}" id="searchInput">
                 <button type="submit">搜索</button>
             </form>
@@ -268,7 +240,6 @@
         </div>
     </div>
 
-    <!-- 教师列表表格 -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -288,41 +259,38 @@
                 <td>{{ student.stu_phnum }}</td>
                 <td>{{ student.stu_semester }}</td>
                 <td>{{ student.stu_major }}</td>
-
                 <td>
-                    <a href="{% url 'student_edit' student.stu_id %}" class="btn btn-warning btn-sm">编 辑</a>
-{#                    <a href="{% url 'student_delete' student.stu_id %}" class="btn btn-danger btn-sm">删除</a>#}
+                    <a href="{% url 'student_edit' student.stu_id %}" class="btn btn-warning btn-sm">编辑</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6">没有找到匹配的学生信息。</td>
+                <td colspan="6">
+                    <strong style="color: #999;">没有找到匹配的学生信息。</strong>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- 分页 -->
     <div class="pagination">
         <span class="page-links">
             {% if page_obj.has_previous %}
-                <a href="?page=1&q={{ search_query }}" class="prev">首页</a>
-                <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}" class="prev">上一页</a>
+                <a href="?page=1&q={{ search_query|default:'' }}" class="prev">首页</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query|default:'' }}" class="prev">上一页</a>
             {% endif %}
 
-            <!-- 当前页码 -->
             <span class="current">
                 第 {{ page_obj.number }} 页，共 {{ paginator.num_pages }} 页
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}&q={{ search_query }}" class="next">下一页</a>
-                <a href="?page={{ paginator.num_pages }}&q={{ search_query }}" class="next">尾页</a>
+                <a href="?page={{ page_obj.next_page_number }}&q={{ search_query|default:'' }}" class="next">下一页</a>
+                <a href="?page={{ paginator.num_pages }}&q={{ search_query|default:'' }}" class="next">尾页</a>
             {% endif %}
         </span>
     </div>
 
-    <!-- 加载动画的 JavaScript 控制 -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var loading = document.getElementById('loading');

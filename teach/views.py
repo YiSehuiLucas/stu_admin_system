@@ -62,7 +62,7 @@ def teach_pushgrades(request):
                 stu_id = data.get('stu_id')
                 cour_id = data.get('cour_id')
                 new_grade = data.get('grade')
-
+                tch_id = data.get('tch_id')
                 with connection.cursor() as cursor:
                     cursor.execute("""
                             UPDATE Grade
@@ -157,6 +157,9 @@ def teach_courseadapt(request):
 
     elif request.method == "POST":
         action = request.POST.get('action')
+        tch_id = request.POST.get('tch_id')
+        if not tch_id:
+            return JsonResponse({'status': 'error', 'message': 'Teacher ID is missing.'}, status=400)
 
         if action == 'submit':
             cour_id = request.POST['cour_id']
@@ -166,11 +169,11 @@ def teach_courseadapt(request):
             timeslot = request.POST['timeslot']
             reason = request.POST['reason']
 
+            if not all([cour_id, week, classroom, dayofweek, timeslot, reason]):
+                return JsonResponse({'status': 'error', 'message': 'All fields are required.'}, status=400)
+
             with connection.cursor() as cursor:
-                cursor.execute("""
-                    INSERT INTO CourseAdapt (tch_id, cour_id, week, classroom, dayofweek, timeslot, reason, status)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, '未审核');
-                """, [
+                data = [
                     tch_id,
                     cour_id,
                     week,
@@ -178,7 +181,12 @@ def teach_courseadapt(request):
                     dayofweek,
                     timeslot,
                     reason
-                ])
+                ]
+                print(data)
+                cursor.execute("""
+                    INSERT INTO CourseAdapt (tch_id, cour_id, week, classroom, dayofweek, timeslot, reason, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, '未审核');
+                """, data)
             return JsonResponse({'status': 'success'})
 
         elif action == 'delete':

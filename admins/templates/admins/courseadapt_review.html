@@ -159,7 +159,8 @@
     </table>
 
     {% if courseadapt.status == '未审核' %}
-        <form method="post" action="{% url 'courseadapt_review' ca_id=courseadapt.ca_id %}">
+        <form method="post" action="{% url 'courseadapt_list' %}">
+        {% csrf_token %}
         <div class="button-container">
             <button type="submit" name="approve" class="btn btn-success">同意</button>
             <button type="submit" name="reject" class="btn btn-danger">拒绝</button>

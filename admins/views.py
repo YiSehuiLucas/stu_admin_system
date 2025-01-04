@@ -1,5 +1,4 @@
-# admins/views.py
-
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,8 +12,10 @@ from django.db.models import Q
 from django.db import transaction
 import logging
 from django.views.decorators.http import require_http_methods
+import re
 from django.http import JsonResponse
 from user.models import User_log
+
 logger = logging.getLogger(__name__)
 
 
@@ -31,8 +32,7 @@ def admin_dashboard(request, user_id):
         messages.error(request, '管理员信息不存在。')
         return redirect('login')  # 重定向到登录页面或其他适当的页面
 
-    return render(request, 'admins/admin_dashboard.html', {'admin': admin,
-                                                           'admin_id': user_id})
+    return render(request, 'admins/admin_dashboard.html', {'admin_id': user_id})
 
 
 def admin_profile(request, user_id):
@@ -82,6 +82,7 @@ def admin_edit(request, user_id):
 
 # @login_required
 # @user_passes_test(is_admin)
+
 def teacher_list(request):
     # 获取搜索参数，默认为空字符串
     search_query = request.GET.get('q', '').strip()
@@ -170,8 +171,6 @@ def teacher_list(request):
     return render(request, 'admins/teacher_list.html', context)
 
 
-# @login_required
-# @user_passes_test(is_admin)
 def teacher_create(request):
     if request.method == 'POST':
         # 获取用户输入的数据
@@ -239,9 +238,9 @@ def teacher_create(request):
             # logger.error(str(e))
             messages.error(request, '创建教师信息时发生错误，请稍后再试。')
             return render(request, 'admins/teacher_form.html')
-
     else:
         return render(request, 'admins/teacher_form.html')
+
 
 
 # @login_required
@@ -321,12 +320,17 @@ def teacher_delete(request, tch_id):
     if request.method == 'POST':
         teacher.delete()
         messages.success(request, '教师信息删除成功')
+
+
         return redirect('teacher_list')
     return render(request, 'admins/teacher_confirm_delete.html', {'teacher': teacher})
 
 
+
 # @login_required
 # @user_passes_test(is_admin)
+
+
 def teacher_import(request):
     if request.method == 'POST' and request.FILES.get('csv_file'):
         csv_file = request.FILES['csv_file']
@@ -388,6 +392,7 @@ def teacher_import(request):
 
             messages.success(request, '教师信息导入成功。')
             return redirect('teacher_list')
+
         except Exception as e:
             # 记录错误日志（可选）
             # logger.error(str(e))
@@ -466,13 +471,13 @@ def courseadapt_review(request, ca_id):
             courseadapt.status = '同意'
             courseadapt.save()
             messages.success(request, '调课申请已同意')
-            return redirect('courseadapt_review')
+            return redirect('admins/waiverapplication_list')
         elif 'reject' in request.POST:
             # 处理拒绝申请
             courseadapt.status = '拒绝'
             courseadapt.save()
             messages.success(request, '调课申请已拒绝')
-            return redirect('courseadapt_review')
+            return redirect('admins/waiverapplication_list')
     else:
         form = CourseAdaptReviewForm()
     return render(request, 'admins/courseadapt_review.html', {'courseadapt': courseadapt})
@@ -602,7 +607,7 @@ def waiverapplication_detail(request, wa_id):
             return render(request, 'admins/waiverapplication_detail.html', {'application': application})
 
         application.save()
-        return redirect('admins/waiverapplication_list')
+        return redirect('waiverapplication_list')
 
     return render(request, 'admins/waiverapplication_detail.html', {'application': application})
 
@@ -657,6 +662,7 @@ def student_list(request):
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         students = cursor.fetchall()
+        print(students)
 
     # 获取总记录数
     count_query = """
@@ -723,43 +729,128 @@ def student_edit(request, stu_id):
 @require_http_methods(['GET', 'POST'])
 def student_create(request):
     if request.method == 'GET':
-        return render(request, 'admins/student_create.html')
+        # 获取专业信息：
+        cursor = connection.cursor()
+        sql = '''select major_name
+                from major'''
+        cursor.execute(sql)
+        major_list = cursor.fetchall()
+        print(major_list)
+
+        # 获取班级信息
+        sql = '''select *
+                from class'''
+        cursor.execute(sql)
+        class_room_list = cursor.fetchall()
+        temp = []
+        for item in class_room_list:
+            temp.append(item[1]+'(班级ID：'+item[0]+')')
+        class_room_list = temp
+        print(class_room_list)
+
+        return render(request, 'admins/student_create.html', {"major_list": major_list,
+                                                              "class_room_list": class_room_list})
     elif request.method == 'POST':
-        stu_name = request.POST.get('name')
-        stu_id = request.POST.get('id')
-        stu_grade = request.POST.get('grade')
-        print(f"{stu_name} {stu_id} {stu_grade}")
+        def validate_phone(phone):
+            # 确保号码是 11 位数字
+            return phone.isdigit() and len(phone) == 11
+
+        name = request.POST.get('name')
+        id = request.POST.get('id')
+        major = request.POST.get('major')
+        class_room = request.POST.get('class_room')
+        phone = request.POST.get('phone')
+        grade = request.POST.get('grade')
+
+        if not validate_phone(phone):
+            return render(request, 'admins/error.html', {"error_message": "电话号码必须是11位的"})
+
+        print(f"{name} {id} {major} {class_room} {phone} {grade}")
+
+        # 确保登陆表中没有这个学生
         cursor = connection.cursor()
         sql = '''select user_name 
         from user_user_log
         where user_name=%s
         '''
-        cursor.execute(sql, stu_id)
+        cursor.execute(sql, id)
         exist = cursor.fetchall()
         cursor.close()
+        print(exist)
         if exist:
-            return JsonResponse({"error": "学生已存在"})
+            return render(request, 'admins/error.html', {'error_message': "学生已存在"})
         else:
-            cursor = connection.cursor()
-            user = User_log.objects.filter(user_name=stu_id).first()
-            if not User_log.objects.filter(user_name=stu_id).first():
-                User_log.objects.create_user(user_name=stu_id, user_pwd='000000',
+            # 先在log表中注册用户
+            user = User_log.objects.filter(user_name=id).first()
+            if not user:
+                User_log.objects.create_user(user_name=id, user_pwd='000000',
                                              identity='student')
-                User_log.objects.filter(user_name=stu_id).update(user_pwd='000000')
-                User_log.objects.filter(user_name=stu_id).update(identity='student')
+                User_log.objects.filter(user_name=id).update(user_pwd='000000')
+                User_log.objects.filter(user_name=id).update(identity='student')
 
-            sql = '''
-                        INSERT INTO user (user_id, password, identity)
-                        VALUES (%s, %s, %s);'''
-            cursor.execute(sql, [stu_id, '000000', '学生'])
+            print('--------------------------------1')
+            # 先插入user表
+            cursor = connection.cursor()
+            sql = '''insert into user(user_id, password, identity)
+                     value (%s, %s, %s)'''
+            data = [id, '000000', '学生']
+            cursor.execute(sql, data)
+            print('--------------------------------1.1')
+            # 写入student表
+            sql = '''insert into student(stu_id, stu_name, stu_phnum, stu_semester)
+                     value (%s, %s, %s, %s)'''
+            data = [id, name, phone, grade]
+            print(data)
+            cursor.execute(sql, data)
+            print('--------------------------------2')
+            # 写入studen_class表（学生和班级关联表）
+            class_id = class_room.split("班级ID：")[1].split(")")[0]
+            sql = '''insert into studentclass(stu_id, class_id)
+                     value (%s, %s)'''
+            data = [id, class_id]
+            cursor.execute(sql, data)
+            print('--------------------------------3')
+            # 写入student_major表(学生专业关联表)
+            # 1.获取major_id
+            sql = '''select major_id
+                     from major
+                     where major_name = %s'''
+            cursor.execute(sql, major)
+            major_id = cursor.fetchall()
+            major_id = major_id[0][0]
+            print('--------------------------------4')
+            # 2.插入student_class表
+            sql = '''insert into studentmajor(stu_id, major_id)
+                     value (%s, %s)'''
+            data = [id, major_id]
+            print(data)
+            cursor.execute(sql, data)
+            cursor.close()
+            return redirect('student_list')
 
-            sql = '''
-            INSERT INTO student (stu_id, stu_name, stu_semester)
-            VALUES (%s, %s, %s);'''
-            cursor.execute(sql, [stu_id, stu_name, '大一上'])
-            return JsonResponse({"success": "添加成功"})
+        return JsonResponse({"检修中": "检修中"})
+
 @require_http_methods(['GET', 'POST'])
 def student_import(request):
+    if request.method == 'GET':
+        return render(request, 'admins/error.html', {'error_message': "你没有权限访问"})
+
+    elif request.method == 'POST':
+        name = request.POST.get('name')
+        id = request.POST.get('id')
+        grade = request.POST.get('grade')
+        print(f"{name} {id} {grade}")
+        # 检查学生是否存在
+        cursor = connection.cursor()
+        sql = '''SELECT stu_id
+                 from student
+                 where stu_id = %s'''
+        cursor.execute(sql, id)
+        id_exist = cursor.fetchall()
+        print(id_exist)
+        if id_exist:
+            print(id_exist)
+            return render(request, 'admins/error.html')
     return JsonResponse({"检修中": "检修中"})
 
 
@@ -772,21 +863,159 @@ def show_courser(request):
         cursor.execute(sql)
         course_list = cursor.fetchall()
         print(course_list)
-        return render(request, 'admins/show_courser.html', {'course_list': course_list})
+        paginator = Paginator(course_list, 12)
+        page_number = request.GET.get('page', 1)  # 获取当前页码，默认为第 1 页
+
+        # 生成学分范围 (0.5 到 6，步长为 0.5)
+        credit_range = [round(i * 0.5, 1) for i in range(1, 13)]
+
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'admins/show_courser.html', {'page_obj': page_obj,
+                                                            'credit_range': credit_range})
 
     elif request.method == 'POST':
-        id = request.POST.get('id')
-        name = request.POST.get('name')
+        name = request.POST.get('id')
+        id = request.POST.get('name')
         point = request.POST.get('point')
         grade = request.POST.get('grade')
+        print(f"{id} {type(id)}")
+        # 检查课程主键是否重复
+        cursor = connection.cursor()
+        sql = '''SELECT cour_id
+                 from course
+                 where cour_id = %s'''
+        cursor.execute(sql, id)
+        id_exist = cursor.fetchall()
+        cursor.close()
+        print(id_exist)
+        if id_exist:
+            return render(request, 'admins/error.html', {'error_message': "课程已存在！"})
+        else:
+            cursor = connection.cursor()
+            sql = '''insert into course(cour_id, cour_name, cour_credits, cour_semester)
+                    values(%s, %s, %s, %s) '''
+            cursor.execute(sql, [id, name, point, grade])
+            cursor.close()
+            return redirect('all_coursers')
+
+            print(False)
         print(f"{id} {name} {point} {grade}")
         return JsonResponse({"asda": 'ads'})
 
 
 @require_http_methods(['GET', 'POST'])
-def courser_plan(request):
-    return render(request, 'admins/courser_plan.html')
+def courser_schedule(request):
+    # 获取课程编号和名称
+    if request.method == 'GET':
+        cursor = connection.cursor()
+        sql = '''SELECT cour_id, cour_name
+                 from course'''
+        cursor.execute(sql)
+        curses = cursor.fetchall()
+        # print(curses)
+        temp = []
+        for item in curses:
+            temp.append(item[0]+'('+item[1]+')')
+        # print(temp)
+        curses = temp
+        # 获取教师编号和姓名
+        cursor = connection.cursor()
+        sql = '''SELECT tch_id, tch_name
+                 from teacher'''
+        cursor.execute(sql)
+        teacher = cursor.fetchall()
+        temp = []
+        for item in teacher:
+            temp.append(item[0]+'('+item[1]+')')
+        teacher = temp
 
+        # 获取上课时间
+        cursor = connection.cursor()
+        sql = '''SELECT schedule_time.time
+                 from schedule_time'''
+        cursor.execute(sql)
+        time = cursor.fetchall()
+        # print(time)
+
+        # 获取课程计划
+        cursor = connection.cursor()
+        sql = '''SELECT 
+                    cs.cour_id AS 课程号,
+                    cs.description AS 课程名,
+                    cs.classroom AS 上课教室,
+                    cs.dayofweek AS 上课星期,
+                    st.time AS 上课时间,
+                    cs.start AS 开始周,
+                    cs.end AS 结束周,
+                    cs.tch_id AS 教师编号,
+                    t.tch_name AS 教师姓名
+                FROM 
+                    courseschedule cs
+                JOIN 
+                    teacher t ON t.tch_id = cs.tch_id
+                JOIN 
+                    schedule_time st ON cs.timeslot = st.id;'''
+        cursor.execute(sql)
+        info = cursor.fetchall()
+        # print(info)
+        weeks = list(range(1, 19))  # 创建一个从 1 到 18 的周数列表
+        print(info)
+        return render(request, 'admins/course_schedule.html', {'weeks': weeks,
+                                                               'curses': curses,
+                                                               'time': time,
+                                                               'teacher': teacher,
+                                                               'info': info})
+    elif request.method == 'POST':
+        cour_id = request.POST.get('course-id')
+        teacher_id = request.POST.get('teacher-id')
+        day_of_week = request.POST.get('day_of_week')
+        start_week = request.POST.get('start_week')
+        end_week = request.POST.get('end_week')
+        classroom = request.POST.get('classroom')
+        time = request.POST.get('time')
+        print(f"{cour_id} {teacher_id} {day_of_week} {start_week} {end_week} {classroom} {time}")
+
+        pattern = r"([A-Za-z0-9]+)\((.*?)\)"
+        match = re.search(pattern, cour_id)
+        if match:
+            course_name = match.group(1)
+            course_id = match.group(2)
+        else:
+            print("没有匹配到括号内外的内容")
+        match = re.search(pattern, teacher_id)
+        if match:
+            teacher_id = match.group(1)
+            teacher_name = match.group(2)
+        else:
+            print("没有匹配到括号内外的内容")
+        print(f"{course_id} {course_name} {teacher_name} {teacher_id}")
+
+        if start_week > end_week:
+            return render(request, 'admins/error.html', {"error_message": "开始周不能大于结束周"})
+        else:
+            cursor = connection.cursor()
+            sql = '''select id
+            from schedule_time
+            where time=%s
+            '''
+            time = re.findall(r"'(.*?)'", time)
+            # print(time)
+            cursor.execute(sql, time[0])
+            timeslot = cursor.fetchall()
+            print(timeslot[0][0])
+            timeslot = timeslot[0][0]
+
+            data = [str(teacher_id), course_name, str(course_id),  classroom, day_of_week, timeslot, start_week, end_week]
+            print(data)
+            sql = '''
+            INSERT INTO stu_admin_system.courseschedule (tch_id, cour_id, description, classroom, dayofweek, timeslot, start, end)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);'''
+            cursor.execute(sql, data)
+            cursor.close()
+            return redirect('courser_schedule')
+
+
+        return redirect('courser_schedule')
 
 
 

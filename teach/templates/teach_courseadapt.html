@@ -17,6 +17,7 @@
     <form method="post" action="{% url 'teach_courseadapt' %}" id="courseAdaptForm">
         {% csrf_token %}
         <input type="hidden" name="action" value="submit">
+        <input type="hidden" name="tch_id" value="{{ tch_id }}"> <!-- 添加隐藏字段 -->
         <div class="modal-header">
             <h2>提交调课申请</h2>
             <button id="closeModalButton" class="modal-button">关闭</button>
@@ -79,7 +80,8 @@
                 data: {
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                     'action': 'delete',
-                    'ca_id': ca_id
+                    'ca_id': ca_id,
+                    'tch_id': '{{ tch_id }}'
                 },
                 success: function(response) {
                     if (response.status === 'success') {
@@ -104,21 +106,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('courseAdaptForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    $.ajax({
-        url: '{% url "teach_courseadapt" %}',
-        type: 'POST',
-        data: $(this).serialize(),
-        success: function(response) {
-            if (response.status === 'success') {
-                location.reload();
+        event.preventDefault();
+
+        var formData = $(this).serializeArray();
+        formData.push({name: 'tch_id', value: '{{ tch_id }}'});
+
+        $.ajax({
+            url: '{% url "teach_courseadapt" %}',
+            type: 'POST',
+            data: $.param(formData),
+            success: function(response) {
+                if (response.status === 'success') {
+                    location.reload();
+                } else {
+                    alert('提交失败：' + response.message);
+                }
+            },
+            error: function() {
+                alert('无法提交申请，请稍后再试。');
             }
-        },
-        error: function() {
-            alert('无法提交申请，请稍后再试。');
-        }
+        });
     });
-});
 });
 </script>
 </body>

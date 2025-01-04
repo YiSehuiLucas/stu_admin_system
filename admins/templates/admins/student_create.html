@@ -2,296 +2,192 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员部分 - 学生信息导入</title>
+
     <style>
-        .product_show {
-            width: 750px;
-            height: 600px;
-        {#border: 1px solid gray;#} margin-right: auto;
-            margin-left: auto;
-            margin-top: 50px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .insert_warehouse {
-            border: 1px solid darkslategrey;
-            width: 750px;
-            height: 250px;
-            margin-right: auto;
-            margin-left: auto;
-            margin-top: 50px;
-            border-radius: 14px
-        }
-
-        .inline-block {
-            display: inline-block;
-            width: 222px;
-            height: 200px;
-        {#background-color: lightblue;#} margin: 12px;
-        }
-
-        td div {
-            text-align: center;
-            line-height: 80px;
-        }
-
-        .input {
-            border: 1px solid black;
-            padding: 1rem;
-            border-radius: 1rem;
-            background: #e8e8e8;
-            box-shadow: 20px 20px 60px #c5c5c5,
-            -20px -20px 60px #ffffff;
-            transition: 0.3s;
-        }
-
-        .input:focus {
-            outline-color: #efcb55;
-            background: #dcd5c2;
-            box-shadow: inset 20px 20px 60px #947a2a,
-            inset -20px -20px 60px #ffffff;
-            transition: 0.3s;
-        }
-
-        /* From Uiverse.io by StealthWorm */
-        .btn {
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 13rem;
-            overflow: hidden;
-            height: 3rem;
-            background-size: 300% 300%;
-            cursor: pointer;
-            backdrop-filter: blur(1rem);
-            border-radius: 5rem;
-            transition: 0.5s;
-            animation: gradient_301 5s ease infinite;
-            border: double 4px transparent;
-            background-image: linear-gradient(#212121, #212121),
-            linear-gradient(
-                    137.48deg,
-                    #ffdb3b 10%,
-                    #fe53bb 45%,
-                    #8f51ea 67%,
-                    #0044ff 87%
-            );
-            background-origin: border-box;
-            background-clip: content-box, border-box;
+            height: 100vh;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            color: #333;
         }
 
-        #container-stars {
-            position: absolute;
-            z-index: -1;
+        .container {
+            width: 90%;
+            max-width: 750px;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group span {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .input {
             width: 100%;
-            height: 100%;
-            overflow: hidden;
-            transition: 0.5s;
-            backdrop-filter: blur(1rem);
-            border-radius: 5rem;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f9f9f9;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
         }
 
-        strong {
-            z-index: 2;
-            font-family: "Avalors Personal Use";
-            font-size: 12px;
-            letter-spacing: 5px;
-            color: #ffffff;
-            text-shadow: 0 0 4px white;
+        .input:focus {
+            outline: none;
+            border-color: #4caf50;
+            background-color: #e8f5e9;
         }
 
-        #glow {
-            position: absolute;
-            display: flex;
-            width: 12rem;
-        }
-
-        .circle {
+        select {
             width: 100%;
-            height: 30px;
-            filter: blur(2rem);
-            animation: pulse_3011 4s infinite;
-            z-index: -1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #f9f9f9;
+            font-size: 1rem;
         }
-
-        .circle:nth-of-type(1) {
-            background: rgba(254, 83, 186, 0.636);
-        }
-
-        .circle:nth-of-type(2) {
-            background: rgba(142, 81, 234, 0.704);
-        }
-
-        .btn:hover #container-stars {
-            z-index: 1;
-            background-color: #212121;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
-        }
-
-        .btn:active {
-            border: double 4px #fe53bb;
-            background-origin: border-box;
-            background-clip: content-box, border-box;
-            animation: none;
-        }
-
-        .btn:active .circle {
-            background: #fe53bb;
-        }
-
-        #stars {
-            position: relative;
-            background: transparent;
-            width: 200rem;
-            height: 200rem;
-        }
-
-        #stars::after {
-            content: "";
-            position: absolute;
-            top: -10rem;
-            left: -100rem;
-            width: 100%;
-            height: 100%;
-            animation: animStarRotate 90s linear infinite;
-        }
-
-        #stars::after {
-            background-image: radial-gradient(#ffffff 1px, transparent 1%);
-            background-size: 50px 50px;
-        }
-
-        #stars::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -50%;
-            width: 170%;
-            height: 500%;
-            animation: animStar 60s linear infinite;
-        }
-
-        #stars::before {
-            background-image: radial-gradient(#ffffff 1px, transparent 1%);
-            background-size: 50px 50px;
-            opacity: 0.5;
-        }
-
-        @keyframes animStar {
-            from {
-                transform: translateY(0);
-            }
-
-            to {
-                transform: translateY(-135rem);
-            }
-        }
-
-        @keyframes animStarRotate {
-            from {
-                transform: rotate(360deg);
-            }
-
-            to {
-                transform: rotate(0);
-            }
-        }
-
-        @keyframes gradient_301 {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        @keyframes pulse_3011 {
-            0% {
-                transform: scale(0.75);
-                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
-            }
-
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-            }
-
-            100% {
-                transform: scale(0.75);
-                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-            }
-        }
-
 
         button {
-            --bg: #e74c3c;
-            --text-color: #fff;
-            position: relative;
-            width: 150px;
-            border: none;
-            background: var(--bg);
-            color: var(--text-color);
-            padding: 1em;
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
             font-weight: bold;
             text-transform: uppercase;
-            transition: 0.2s;
-            border-radius: 5px;
-            opacity: 0.8;
-            letter-spacing: 1px;
-            box-shadow: #c0392b 0px 7px 2px, #000 0px 8px 5px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
-            opacity: 1;
+            background: #45a049;
         }
 
         button:active {
-            top: 4px;
-            box-shadow: #c0392b 0px 3px 2px, #000 0px 3px 5px;
+            transform: scale(0.98);
+        }
+
+        small {
+            display: block;
+            margin-top: 5px;
+            color: red;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-<h1 style="text-align: center; margin-top: 60px">添加学生</h1>
-<div style="margin-left: 350px; margin-right: auto">
+<div class="container">
+    <h1>添加学生</h1>
     <form method="POST">
         {% csrf_token %}
-        <div style="margin-left: 23px; margin-top: 20px">
+        <div class="form-group">
+            <span>学生姓名</span>
+            <input type="text" name="name" class="input" placeholder="学生姓名">
+        </div>
 
+        <div class="form-group">
+            <span>学生学号</span>
+            <input type="text" name="id" class="input" placeholder="学号">
+        </div>
 
-    <span style="margin: 50px">
-        <span>学生姓名</span>
-        <input type="text" name="name" class="input" placeholder="学生姓名">
-    </span>
-            <span style="margin-left: 50px">
-        <span>学生学号</span>
-        <input type="text" name="id" class="input" placeholder="学号">
-    </span>
-            <div style="height: 10px"></div>
-            <div>
-    <span style="margin: 50px">
-        <span>学生年级</span>
-        <input type="text" name="grade" class="input" placeholder="年级" value="大一上">
-    </span>
+        <div class="form-group">
+            <span>学生专业</span>
+            <select id="major" name="major" required>
+                {% for major in major_list %}
+                    <option value="{{ major.0 }}">{{ major.0 }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
+        <div class="form-group">
+            <span>学生班级</span>
+            <select id="class_room" name="class_room" required>
+                {% for class in class_room_list %}
+                    <option value="{{ class }}">{{ class }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <button style="margin-left: 130px">
-        确定添加
-    </button>
+        <div class="form-group">
+            <span>联系电话</span>
+            <input type="text" name="phone" id="phone" class="input" placeholder="联系电话" maxlength="11">
+            <small id="phone-error" style="display: none;">请输入11位数字</small>
+        </div>
+        <script>
+            const phoneInput = document.getElementById("phone");
+            const phoneError = document.getElementById("phone-error");
 
+            phoneInput.addEventListener("input", function () {
+                const value = phoneInput.value;
+                phoneInput.value = value.replace(/\D/g, '');
 
-            </div>
+                if (phoneInput.value.length !== 11) {
+                    phoneError.style.display = "block";
+                } else {
+                    phoneError.style.display = "none";
+                }
+            });
+        </script>
+
+        <div class="form-group">
+            <span>学生年级</span>
+            <select name="grade" class="input">
+                <option value="大一上">大一上</option>
+                <option value="大一下">大一下</option>
+                <option value="大二上">大二上</option>
+                <option value="大二下">大二下</option>
+                <option value="大三上">大三上</option>
+                <option value="大三下">大三下</option>
+                <option value="大四上">大四上</option>
+                <option value="大四下">大四下</option>
+            </select>
+        </div>
+
+        <button type="submit">确定添加</button>
     </form>
-
 </div>
 </body>
-
 </html>

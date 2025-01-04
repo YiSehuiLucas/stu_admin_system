@@ -1,5 +1,3 @@
-# admins/urls.py
-
 from django.urls import path
 from . import views
 
@@ -25,6 +23,6 @@ urlpatterns = [
     path('teachers/import', views.student_import, name='student_import'),
 
     path('courser/all/', views.show_courser, name='all_coursers'),
-    path('courser/plan/', views.courser_plan, name='courser_plan')
-    # path('students/<str:stu_id>/delete', views.student_delete, name='student_delete'),
+    path('courser/schedule/', views.courser_schedule, name='courser_schedule'),
+
 ]

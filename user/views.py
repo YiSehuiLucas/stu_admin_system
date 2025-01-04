@@ -70,6 +70,8 @@ def login(request):
             password = request.POST.get('pwd')
             print(f"{identity} {username} {password}")
             user = User_log.objects.filter(user_name=username).first()
+            if not user:
+                return render(request, 'admins/error.html', {"error_message": "用户不存在！"})
             use = user.check_password(password)
             # 学生用户登陆
             if identity == 'student':
@@ -87,7 +89,7 @@ def login(request):
                     cursor.close()
                     return render(request, 'stu_main.html', {"stu_id": stu_id, "name": name})
                 else:
-                    return JsonResponse({'error': '用户名或密码错误'})
+                    return render(request, 'admins/error.html', {"error_message": "密码错误！"})
             # 教师用户登陆
             elif identity == 'teacher':
                 tch_id = str(user)
@@ -101,9 +103,9 @@ def login(request):
                     tch_name = tch_name[0][0]
                     cursor.close()
                     cursor.close()
-                    return render(request, 'teach_index.html', {"tch_id": tch_id, "name": tch_name})
+                    return render(request, 'teach_index.html', {"tch_id": tch_id, "username": tch_name})
                 else:
-                    return JsonResponse({'error': '用户名或密码错误'})
+                    return render(request, 'admins/error.html', {"error_message": "密码错误！"})
 
             # 管理员用户登陆
             elif identity == 'admin':
@@ -120,9 +122,9 @@ def login(request):
                     cursor.close()
                     return render(request, 'admins/admin_dashboard.html', {"admin_id": admin_id, "admin_name": admin_name})
                 else:
-                    return JsonResponse({'error': '用户名或密码错误'})
+                    return render(request, 'admins/error.html', {"error_message": "密码错误！"})
                 pass
             else:
-                return JsonResponse({'error': '用户名或密码错误'})
+                return render(request, 'admins/error.html', {"error_message": "密码错误！"})
         else:
-            return JsonResponse({'error': 'error'})
+            return render(request, 'admins/error.html', {"error_message": "密码错误！"})

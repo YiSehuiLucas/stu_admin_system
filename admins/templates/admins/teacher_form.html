@@ -8,29 +8,30 @@
     <style>
         /* 设置全局背景样式 */
         body {
-            background-color: #f4f9fc; /* 页面背景设为白色 */
-            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc); /* 渐变背景 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-        }
-
-        /* 页面容器样式，使用flexbox让内容居中 */
-        .teacher-form-container {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f4f9fc; /* 背景为白色 */
+        }
+
+        /* 页面容器样式 */
+        .teacher-form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
 
         .teacher-form {
-            background-image: url("{% static 'editt.jpg' %}"); /* 使用Django的静态文件加载语法 */
-            background-size: cover; /* 背景图覆盖整个区域 */
-            background-position: center; /* 背景图居中 */
-            background-attachment: fixed; /* 背景固定 */
+            background-color: rgba(255, 255, 255, 0.9); /* 半透明背景 */
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             width: 100%;
             box-sizing: border-box;
@@ -39,9 +40,9 @@
         /* 标题样式 */
         .teacher-form h3 {
             text-align: center;
-            color: #fff; /* 标题文字颜色改为白色以适应背景 */
-            margin-bottom: 20px;
-            font-size: 24px;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 28px;
             font-weight: 600;
         }
 
@@ -57,24 +58,25 @@
 
         .teacher-form label {
             font-weight: bold;
-            color: #fff; /* 标签文字颜色改为白色 */
-            margin-bottom: 5px;
+            color: #333;
+            margin-bottom: 8px;
         }
 
         .teacher-form .form-group input,
         .teacher-form .form-group select {
-            padding: 12px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
             border: 1px solid #ccc;
             font-size: 16px;
             width: 100%;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .teacher-form .form-group input:focus,
         .teacher-form .form-group select:focus {
-            border-color: #007bff;
+            border-color: #4CAF50;
             outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
         }
 
         /* 提交按钮样式 */
@@ -82,16 +84,17 @@
             background-color: #007bff;
             color: #fff;
             border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 16px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
+            margin-top: 20px;
         }
 
         .teacher-form .btn-submit:hover {
             background-color: #0056b3;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
         /* 错误信息样式 */
@@ -105,11 +108,11 @@
         .teacher-form .btn-secondary {
             background-color: #6c757d;
             color: #fff;
-            padding: 12px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
             text-decoration: none;
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
             transition: background-color 0.3s;
         }
@@ -121,11 +124,11 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .teacher-form {
-                padding: 30px;
+                padding: 25px;
             }
 
             .teacher-form h3 {
-                font-size: 20px;
+                font-size: 24px;
             }
 
             .teacher-form .form-group input,
@@ -136,7 +139,7 @@
             .teacher-form .btn-submit,
             .teacher-form .btn-secondary {
                 font-size: 14px;
-                padding: 10px;
+                padding: 12px;
             }
         }
     </style>
@@ -145,17 +148,6 @@
     <div class="teacher-form-container">
         <div class="teacher-form">
             <h3>创建教师信息</h3>
-
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="关闭">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% endfor %}
-            {% endif %}
 
             <form method="post" action="{% url 'teacher_create' %}">
                 {% csrf_token %}

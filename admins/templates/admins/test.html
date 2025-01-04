@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <style>
+        /* From Uiverse.io by CristianMontoya98 */
+        .btn {
+            width: 6.5em;
+            height: 2.3em;
+            margin: 0.5em;
+            background: black;
+            color: white;
+            border: none;
+            border-radius: 0.625em;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        button:hover {
+            color: black;
+        }
+
+        button:after {
+            content: "";
+            background: white;
+            position: absolute;
+            z-index: -1;
+            left: -20%;
+            right: -20%;
+            top: 0;
+            bottom: 0;
+            transform: skewX(-45deg) scale(0, 1);
+            transition: all 0.5s;
+        }
+
+        button:hover:after {
+            transform: skewX(-45deg) scale(1, 1);
+            -webkit-transition: all 0.5s;
+            transition: all 0.5s;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+
+        .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .form-inline .form-group {
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .form-inline .form-group:first-child {
+            margin-left: 0;
+        }
+
+        .form-inline .form-group:last-child {
+            margin-right: 0;
+        }
+
+        .submit-btn {
+            text-align: center;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            margin: 20px 0;
+        }
+
+        .table-bordered {
+            border: 2px solid #4CAF50;
+        }
+
+        .table thead th {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .table tbody tr {
+            background-color: #f9f9f9;
+            transition: background-color 0.3s;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .table tbody td {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<h3>导入新课程</h3>
+    <div class="form-container">
+        <form method="POST" action="{% url 'all_coursers' %}">
+            {% csrf_token %}
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="course-id">课程编号</label>
+                    <input type="text" id="course-id" name="name" placeholder="输入课程编号">
+                </div>
+                <div class="form-group">
+                    <label for="course-name">课程名称</label>
+                    <input type="text" id="course-name" name="id" placeholder="输入课程名称">
+                </div>
+            </div>
+
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="course-credit">课程学分</label>
+                    <select id="course-credit" name="point">
+                        {% for credit in credit_range %}
+                        <option value="{{ credit }}">{{ credit }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="course-grade">开设年级</label>
+                    <select id="course-grade" name="grade">
+                        <option value="大一上">大一上</option>
+                        <option value="大一下">大一下</option>
+                        <option value="大二上">大二上</option>
+                        <option value="大二下">大二下</option>
+                        <option value="大三上">大三上</option>
+                        <option value="大三下">大三下</option>
+                        <option value="大四上">大四上</option>
+                        <option value="大四下">大四下</option>
+                    </select>
+                </div>
+            </div>
+            <div class="submit-btn">
+                <button type="submit" class="btn">确定添加</button>
+            </div>
+        </form>
+    </div>
+
+    <h3>全部课程表</h3>
+    <div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>课程号</th>
+                    <th>课程名</th>
+                    <th>学分</th>
+                    <th>开设学期</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in page_obj %}
+                <tr>
+                    <td>{{ item.0 }}</td>
+                    <td>{{ item.1 }}</td>
+                    <td>{{ item.2 }}</td>
+                    <td>{{ item.3 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 分页导航 -->
+    <div style="text-align: center; margin-top: 20px;">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li><a href="?page=1">首页</a></li>
+                <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% else %}
+                <li class="disabled"><span>首页</span></li>
+                <li class="disabled"><span>上一页</span></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="active"><span>{{ num }}</span></li>
+                {% else %}
+                <li><a href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+                <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+                {% else %}
+                <li class="disabled"><span>下一页</span></li>
+                <li class="disabled"><span>末页</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</body>
+</body>
+</html>

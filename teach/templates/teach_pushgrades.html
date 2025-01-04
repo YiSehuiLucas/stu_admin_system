@@ -46,6 +46,7 @@
 
 <script>
 function saveGrade(stuId, courId, button) {
+    const tchId = '{{ tch_id }}';
     const newGrade = document.querySelector(`input[name="grade_${stuId}_${courId}"]`).value;
     fetch("{% url 'teach_pushgrades' %}", {
         method: 'POST',
@@ -56,6 +57,7 @@ function saveGrade(stuId, courId, button) {
         },
         body: JSON.stringify({
             action: 'update_grade',
+            tch_id: tchId,
             stu_id: stuId,
             cour_id: courId,
             grade: newGrade

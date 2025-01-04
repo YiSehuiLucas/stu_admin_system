@@ -14,10 +14,10 @@ def stu_main(request):
                 WHERE stu_id = %s;'''
     cursor.execute(sql, stu_id)
     stu = cursor.fetchall()
-    stu = stu[0][0]
+    name = stu[0][0]
     cursor.close()
     if request.method == 'GET':
-        return render(request, "stu_main.html", {"stu": stu, "stu_id": stu_id})
+        return render(request, "stu_main.html", {"name": name, "stu_id": stu_id})
 
 
 def stu_select(request):
